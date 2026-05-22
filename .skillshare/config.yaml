@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/runkids/skillshare/main/schemas/project-config.schema.json
 targets:
   - claude
   - copilot
@@ -5,6 +6,6 @@ targets:
   - gemini
   - crush
   - codex
-
-audit:
-  level: moderate
+skills:
+  - name: skill-creator
+    source: github.com/anthropics/skills/skill-creator

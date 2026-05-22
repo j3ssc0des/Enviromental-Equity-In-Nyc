@@ -27,3 +27,17 @@ build/
 # OS
 Thumbs.db
 .DS_Store
+Show less
+19:13
+
+# Python
+nyc_trees_map.html
+venv/
+__pycache__/
+*.pyc
+
+
+
+
+
+
