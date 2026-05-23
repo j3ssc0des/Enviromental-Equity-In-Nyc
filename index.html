@@ -25,325 +25,171 @@
       --amber:        #f5b800;
       --orange:       #d94f00;
       --crimson:      #6d0000;
+      --purple:       #7c52e0;
       --mono:         "Space Mono", monospace;
       --sans:         "DM Sans", system-ui, sans-serif;
     }
 
     html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      min-height: 100vh;
-    }
-
-    /* ── STICKY NAV ──────────────────────────────────────────── */
+    /* ── STICKY NAV ────────────────────────────────────────── */
     nav {
-      position: sticky;
-      top: 0;
-      z-index: 200;
+      position: sticky; top: 0; z-index: 200;
       height: 50px;
       background: rgba(13,17,23,0.96);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(47,160,94,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      gap: 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; gap: 12px;
     }
-
     .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      font-family: var(--mono);
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      color: var(--green);
-      white-space: nowrap;
-      flex-shrink: 0;
-      text-decoration: none;
+      display: flex; align-items: center; gap: 9px;
+      font-family: var(--mono); font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.14em; color: var(--green);
+      white-space: nowrap; flex-shrink: 0; text-decoration: none;
     }
     .brand-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 6px rgba(47,160,94,0.7);
-      flex-shrink: 0;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 6px rgba(47,160,94,0.7); flex-shrink: 0;
     }
-
     .nav-tabs { display: flex; gap: 4px; }
     .nav-tab {
-      font-family: var(--mono);
-      font-size: 0.6rem;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 5px 12px;
-      cursor: pointer;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
-      white-space: nowrap;
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em;
+      color: var(--muted); background: transparent;
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 5px 12px; cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s; white-space: nowrap;
     }
     .nav-tab:hover  { color: var(--green); border-color: var(--green-border); }
     .nav-tab.active { color: var(--green); border-color: var(--green); background: var(--green-lo); }
-
     .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: var(--mono);
-      font-size: 0.6rem;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      white-space: nowrap;
-      flex-shrink: 0;
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em;
+      color: var(--muted); white-space: nowrap; flex-shrink: 0;
     }
     .live-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(47,160,94,0.1);
-      border: 1px solid rgba(47,160,94,0.35);
-      color: var(--green);
-      border-radius: 3px;
-      padding: 3px 8px;
-      font-size: 0.58rem;
-      letter-spacing: 0.14em;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(47,160,94,0.1); border: 1px solid rgba(47,160,94,0.35);
+      color: var(--green); border-radius: 3px; padding: 3px 8px;
+      font-size: 0.58rem; letter-spacing: 0.14em;
     }
     .live-badge::before {
-      content: '';
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--green);
-      animation: pulse 2.2s ease-in-out infinite;
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green); animation: pulse 2.2s ease-in-out infinite;
     }
     @keyframes pulse {
       0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(47,160,94,0.5); }
       50%      { opacity:0.6; box-shadow:0 0 0 5px rgba(47,160,94,0); }
     }
 
-    /* ── HERO ────────────────────────────────────────────────── */
-    .hero {
-      padding: 3.5rem 1.5rem 2rem;
-      max-width: 760px;
-      margin: 0 auto;
-      text-align: center;
-    }
+    /* ── HERO ──────────────────────────────────────────────── */
+    .hero { padding: 3.5rem 1.5rem 2rem; max-width: 760px; margin: 0 auto; text-align: center; }
     .eyebrow {
-      display: inline-block;
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      background: rgba(47,160,94,0.1);
-      border: 1px solid rgba(47,160,94,0.25);
-      border-radius: 99px;
-      padding: 0.25rem 0.9rem;
-      margin-bottom: 1.1rem;
+      display: inline-block; font-family: var(--mono); font-size: 0.7rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--green); background: rgba(47,160,94,0.1);
+      border: 1px solid rgba(47,160,94,0.25); border-radius: 99px;
+      padding: 0.25rem 0.9rem; margin-bottom: 1.1rem;
     }
     .hero h1 {
-      font-size: clamp(1.8rem, 5vw, 2.8rem);
-      font-weight: 700;
-      line-height: 1.15;
-      letter-spacing: -0.03em;
-      color: #fff;
-      margin-bottom: 1rem;
+      font-size: clamp(1.8rem,5vw,2.8rem); font-weight: 700;
+      line-height: 1.15; letter-spacing: -0.03em; color: #fff; margin-bottom: 1rem;
     }
     .hero h1 em { font-style: normal; color: var(--green); }
-    .hero p {
-      font-size: 1rem;
-      line-height: 1.7;
-      color: var(--muted);
-      max-width: 580px;
-      margin: 0 auto;
-    }
+    .hero p { font-size: 1rem; line-height: 1.7; color: var(--muted); max-width: 580px; margin: 0 auto; }
 
-    /* ── STATS BAR ───────────────────────────────────────────── */
+    /* ── STATS BAR ─────────────────────────────────────────── */
     .stats-bar {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: center; flex-wrap: wrap;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
       margin-bottom: 2rem;
     }
     .stat {
-      flex: 1;
-      min-width: 180px;
-      background: var(--surface);
-      padding: 2.25rem 1.5rem 2rem;
-      text-align: center;
-      border-top: 2px solid var(--green);
-      margin: 0 0.75rem;
+      flex: 1; min-width: 180px; background: var(--surface);
+      padding: 2.25rem 1.5rem 2rem; text-align: center;
+      border-top: 2px solid var(--green); margin: 0 0.75rem;
     }
     .stat:first-child { margin-left: 0; }
     .stat:last-child  { margin-right: 0; }
     .stat-number {
-      font-family: var(--mono);
-      font-size: clamp(2.8rem, 6vw, 4.5rem);
-      font-weight: 500;
-      color: var(--green);
-      line-height: 1;
-      margin-bottom: 0.5rem;
+      font-family: var(--mono); font-size: clamp(2.8rem,6vw,4.5rem); font-weight: 500;
+      color: var(--green); line-height: 1; margin-bottom: 0.5rem;
       text-shadow: 0 0 30px rgba(47,160,94,0.4);
     }
-    .stat-label {
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
+    .stat-label { font-size: 0.78rem; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
 
-    /* ── HOW TO USE ──────────────────────────────────────────── */
-    .how-to {
-      max-width: 900px;
-      margin: 0 auto 2.5rem;
-      padding: 0 1.5rem;
-    }
+    /* ── HOW TO USE ────────────────────────────────────────── */
+    .how-to { max-width: 900px; margin: 0 auto 2.5rem; padding: 0 1.5rem; }
     .section-label {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--green-bright);
-      margin-bottom: 0.85rem;
-      padding-top: 0.5rem;
+      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--green-bright);
+      margin-bottom: 0.85rem; padding-top: 0.5rem;
     }
-    .tips-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 0.75rem;
-    }
+    .tips-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 0.75rem; }
     .tip {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(47,160,94,0.2);
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
-      display: flex;
-      gap: 0.75rem;
-      align-items: flex-start;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(47,160,94,0.2);
+      border-radius: 8px; padding: 1rem 1.1rem; display: flex; gap: 0.75rem; align-items: flex-start;
     }
     .tip-icon { font-size: 1.2rem; line-height: 1; flex-shrink: 0; margin-top: 0.05rem; }
     .tip p { font-size: 0.85rem; line-height: 1.5; color: #e2ede4; }
     .tip p strong { color: #fff; font-weight: 600; }
 
-    /* ── DASHBOARD SECTION ───────────────────────────────────── */
+    /* ── TAB VIEWS ─────────────────────────────────────────── */
+    .tab-view { display: none; }
+    .tab-view.active { display: block; animation: tab-fade 0.3s ease; }
+    @keyframes tab-fade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+    /* ── DASHBOARD (GEO MAP) ───────────────────────────────── */
     .dashboard {
-      display: flex;
-      height: 680px;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      display: flex; height: 680px;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     }
+    .map-col { flex: 0 0 65%; position: relative; border-right: 1px solid var(--border); }
+    .map-col iframe { width: 100%; height: 100%; border: none; display: block; }
 
-    /* Map column */
-    .map-col {
-      flex: 0 0 65%;
-      position: relative;
-      border-right: 1px solid var(--border);
-    }
-    .map-col iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-    }
-
-    /* Layer filter overlay */
     .filter-panel {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      z-index: 400;
-      background: rgba(10,13,18,0.92);
-      border: 1px solid var(--green-border);
-      border-radius: 6px;
-      padding: 9px 13px;
-      backdrop-filter: blur(10px);
-      min-width: 138px;
+      position: absolute; top: 12px; left: 12px; z-index: 400;
+      background: rgba(10,13,18,0.92); border: 1px solid var(--green-border);
+      border-radius: 6px; padding: 9px 13px; backdrop-filter: blur(10px); min-width: 138px;
     }
     .filter-title {
-      font-family: var(--mono);
-      font-size: 0.56rem;
-      letter-spacing: 0.18em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border);
+      font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.18em;
+      color: var(--muted); text-transform: uppercase;
+      margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
     }
     .filter-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.76rem;
-      color: var(--text);
-      padding: 3px 0;
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.15s;
+      display: flex; align-items: center; gap: 8px; font-size: 0.76rem; color: var(--text);
+      padding: 3px 0; cursor: pointer; user-select: none; transition: color 0.15s;
     }
     .filter-label:hover { color: var(--green); }
     .filter-cb {
-      appearance: none;
-      width: 13px; height: 13px;
-      border: 1px solid var(--muted);
-      border-radius: 2px;
-      background: transparent;
-      cursor: pointer;
-      flex-shrink: 0;
-      position: relative;
+      appearance: none; width: 13px; height: 13px;
+      border: 1px solid var(--muted); border-radius: 2px; background: transparent;
+      cursor: pointer; flex-shrink: 0; position: relative;
       transition: background 0.15s, border-color 0.15s;
     }
     .filter-cb:checked { background: var(--green); border-color: var(--green); }
     .filter-cb:checked::after {
-      content: '';
-      position: absolute;
-      top: 1px; left: 3px;
-      width: 5px; height: 8px;
-      border: 2px solid #0a0d12;
-      border-top: none; border-left: none;
-      transform: rotate(45deg);
+      content: ''; position: absolute; top: 1px; left: 3px;
+      width: 5px; height: 8px; border: 2px solid #0a0d12;
+      border-top: none; border-left: none; transform: rotate(45deg);
     }
 
-    /* Right panel */
     .panel-col {
-      flex: 0 0 35%;
-      background: var(--panel-bg);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+      flex: 0 0 35%; background: var(--panel-bg);
+      display: flex; flex-direction: column; overflow: hidden;
     }
-    .panel-header {
-      padding: 12px 16px 10px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
+    .panel-header { padding: 12px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .panel-eyebrow {
-      font-family: var(--mono);
-      font-size: 0.56rem;
-      letter-spacing: 0.2em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 9px;
+      font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.2em;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 9px;
     }
     .metric-tabs { display: flex; gap: 3px; }
     .mtab {
-      font-family: var(--mono);
-      font-size: 0.58rem;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 4px 10px;
-      cursor: pointer;
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em;
+      color: var(--muted); background: transparent; border: 1px solid var(--border);
+      border-radius: 3px; padding: 4px 10px; cursor: pointer;
       transition: color 0.15s, border-color 0.15s, background 0.15s;
     }
     .mtab:hover  { color: var(--text); border-color: var(--muted); }
@@ -353,14 +199,7 @@
     .panel-body::-webkit-scrollbar { width: 3px; }
     .panel-body::-webkit-scrollbar-thumb { background: var(--border); }
 
-    .placeholder {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
+    .placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
     .ph-dashes { font-family: var(--mono); font-size: 2.8rem; color: var(--border); letter-spacing: 0.4em; }
     .ph-hint { font-size: 0.78rem; color: var(--muted); text-align: center; max-width: 190px; line-height: 1.55; }
 
@@ -371,14 +210,8 @@
     .nta-name { font-size: 1.05rem; font-weight: 600; color: #fff; line-height: 1.25; margin-bottom: 6px; }
     .nta-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
     .nta-boro { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; color: var(--muted); }
-    .eq-badge {
-      font-family: var(--mono);
-      font-size: 0.56rem;
-      letter-spacing: 0.12em;
-      padding: 2px 7px;
-      border-radius: 3px;
-      text-transform: uppercase;
-    }
+    .eq-badge { font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.12em; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; }
+
     .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 13px; }
     .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 9px 11px; }
     .sb-label { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
@@ -395,37 +228,20 @@
 
     .panel-divider { height: 1px; background: var(--border); margin: 13px 0; }
     .nta-summary {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 2px solid var(--green);
-      border-radius: 0 5px 5px 0;
-      padding: 10px 12px;
-      font-size: 0.8rem;
-      line-height: 1.62;
-      color: var(--muted);
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 2px solid var(--green); border-radius: 0 5px 5px 0;
+      padding: 10px 12px; font-size: 0.8rem; line-height: 1.62; color: var(--muted);
     }
 
-    /* ── TICKER ──────────────────────────────────────────────── */
+    /* ── TICKER ────────────────────────────────────────────── */
     .ticker {
-      height: 36px;
-      background: #080b0e;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      overflow: hidden;
+      height: 36px; background: #080b0e; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; overflow: hidden;
     }
     .ticker-tag {
-      flex-shrink: 0;
-      font-family: var(--mono);
-      font-size: 0.56rem;
-      letter-spacing: 0.16em;
-      color: var(--green);
-      background: var(--green-lo);
-      border-right: 1px solid var(--green-border);
-      padding: 0 14px;
-      height: 100%;
-      display: flex;
-      align-items: center;
+      flex-shrink: 0; font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.16em;
+      color: var(--green); background: var(--green-lo); border-right: 1px solid var(--green-border);
+      padding: 0 14px; height: 100%; display: flex; align-items: center;
     }
     .ticker-track { flex: 1; overflow: hidden; height: 100%; display: flex; align-items: center; }
     .ticker-inner { display: flex; white-space: nowrap; animation: ticker-scroll 30s linear infinite; }
@@ -433,84 +249,107 @@
     .ticker-item b { color: var(--green); font-weight: 400; }
     @keyframes ticker-scroll { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
 
-    /* ── KEY FINDINGS ────────────────────────────────────────── */
-    .findings {
-      max-width: 900px;
-      margin: 0 auto 3rem;
-      padding: 0 1.5rem;
+    /* ── BOROUGH STATS VIEW ────────────────────────────────── */
+    .tabview-inner {
+      max-width: 1060px; margin: 0 auto;
+      padding: 2rem 1.5rem 1.5rem;
     }
-    .findings .section-label { padding-top: 2.5rem; }
-    .findings-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 0.75rem;
+    .tv-header { margin-bottom: 1.75rem; }
+    .tv-title {
+      font-family: var(--mono); font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--green); margin-bottom: 4px;
     }
-    .finding {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--green);
-      border-radius: 0 8px 8px 0;
-      padding: 1.1rem 1.25rem;
-    }
-    .finding-tag {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 0.4rem;
-    }
-    .finding p { font-size: 0.9rem; line-height: 1.55; color: var(--text); }
-    .finding .hi   { color: var(--green);  font-weight: 700; }
-    .finding .warn { color: var(--amber);  font-weight: 700; }
-    .finding .alert{ color: var(--orange); font-weight: 700; }
+    .tv-sub { font-size: 0.85rem; color: var(--muted); }
 
-    /* ── FOOTER ──────────────────────────────────────────────── */
-    footer {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 1.5rem;
+    .loading-msg { padding: 3rem; text-align: center; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); letter-spacing: 0.1em; }
+
+    /* Bar charts */
+    .charts-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 2rem; }
+    .chart-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.25rem; }
+    .chart-panel-title {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 1rem;
     }
-    .footer-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
+    .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .bar-boro { font-family: var(--mono); font-size: 0.62rem; color: var(--text); width: 78px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-track-wrap { flex: 1; position: relative; }
+    .bar-track { height: 18px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .bar-val { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); font-family: var(--mono); font-size: 0.58rem; color: rgba(255,255,255,0.6); white-space: nowrap; }
+
+    /* Borough table */
+    .borough-table-wrap {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
     }
-    .footer-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.75rem;
+    .borough-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .borough-table th {
+      font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+      padding: 10px 14px; text-align: left;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
     }
-    .data-sources {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.35rem 1rem;
-      font-size: 0.78rem;
-      color: var(--muted);
+    .borough-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text); }
+    .borough-table tr:last-child td { border-bottom: none; }
+    .borough-table tr:hover td { background: rgba(47,160,94,0.04); }
+    .borough-table .mono-val { font-family: var(--mono); color: var(--green); }
+
+    /* ── HEAT INDEX VIEW ───────────────────────────────────── */
+    .heat-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap: 0.75rem; }
+    .heat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 1rem 1.1rem;
     }
+    .heat-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; }
+    .heat-nta { font-size: 0.88rem; font-weight: 600; color: #fff; line-height: 1.25; }
+    .heat-boro { font-family: var(--mono); font-size: 0.58rem; color: var(--muted); margin-top: 2px; letter-spacing: 0.06em; }
+    .heat-label-badge {
+      font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.1em;
+      padding: 3px 7px; border-radius: 3px; flex-shrink: 0; text-transform: uppercase;
+    }
+    .heat-bar-wrap { margin-bottom: 8px; }
+    .heat-bar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin-bottom: 3px; }
+    .heat-bar-fill { height: 100%; border-radius: 3px; transition: width 0.7s ease; }
+    .heat-bar-ends { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.5rem; color: var(--muted); }
+    .heat-stats { display: flex; gap: 12px; }
+    .heat-stat { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); }
+    .heat-stat span { color: var(--text); }
+
+    /* Rank number */
+    .heat-rank { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); flex-shrink: 0; width: 20px; text-align: right; }
+
+    /* ── KEY FINDINGS ──────────────────────────────────────── */
+    .findings { max-width: 900px; margin: 0 auto 3rem; padding: 0 1.5rem; }
+    .findings .section-label { padding-top: 2.5rem; }
+    .findings-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 0.75rem; }
+    .finding {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 1.1rem 1.25rem;
+    }
+    .finding-tag { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 0.4rem; }
+    .finding p { font-size: 0.9rem; line-height: 1.55; color: var(--text); }
+    .finding .hi    { color: var(--green);  font-weight: 700; }
+    .finding .warn  { color: var(--amber);  font-weight: 700; }
+    .finding .alert { color: var(--orange); font-weight: 700; }
+
+    /* ── FOOTER ────────────────────────────────────────────── */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 1.5rem; }
+    .footer-inner { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .data-sources { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1rem; font-size: 0.78rem; color: var(--muted); }
     .data-sources a { color: var(--green); text-decoration: none; }
     .data-sources a:hover { text-decoration: underline; }
     .footer-credit { font-size: 0.75rem; color: var(--muted); }
-    .footer-note {
-      font-family: var(--mono);
-      font-size: 0.62rem;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-      padding-top: 0.25rem;
-      border-top: 1px solid var(--border);
-    }
+    .footer-note { font-family: var(--mono); font-size: 0.62rem; color: var(--muted); letter-spacing: 0.04em; padding-top: 0.25rem; border-top: 1px solid var(--border); }
 
-    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    /* ── RESPONSIVE ────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .charts-grid { grid-template-columns: 1fr; }
+    }
     @media (max-width: 820px) {
       .dashboard { flex-direction: column; height: auto; }
-      .map-col   { flex: none; height: 52vh; border-right: none; border-bottom: 1px solid var(--border); }
+      .map-col { flex: none; height: 52vh; border-right: none; border-bottom: 1px solid var(--border); }
       .panel-col { flex: none; height: 420px; }
-      .nav-tabs  { display: none; }
+      .nav-tabs { display: none; }
       .footer-row { flex-direction: column; align-items: flex-start; }
     }
     @media (max-width: 600px) {
@@ -521,16 +360,16 @@
 </head>
 <body>
 
-  <!-- ① STICKY NAV ─────────────────────────────────────────── -->
+  <!-- NAV ───────────────────────────────────────────────────── -->
   <nav>
     <a class="nav-brand" href="#">
       <div class="brand-dot"></div>
       🌳 NYC GREEN SPACE
     </a>
     <div class="nav-tabs">
-      <button class="nav-tab active">🗺 GEO MAP</button>
-      <button class="nav-tab">📊 BOROUGH STATS</button>
-      <button class="nav-tab">🌡 HEAT INDEX</button>
+      <button class="nav-tab active" data-tab="geomap">🗺 GEO MAP</button>
+      <button class="nav-tab" data-tab="borough">📊 BOROUGH STATS</button>
+      <button class="nav-tab" data-tab="heat">🌡 HEAT INDEX</button>
     </div>
     <div class="nav-right">
       <span class="live-badge">LIVE</span>
@@ -538,7 +377,7 @@
     </div>
   </nav>
 
-  <!-- ② HERO ──────────────────────────────────────────────── -->
+  <!-- HERO ──────────────────────────────────────────────────── -->
   <section class="hero">
     <div class="eyebrow">NYC Street Tree Census &nbsp;·&nbsp; 2005 &amp; 2015</div>
     <h1>Does your neighborhood<br>get its fair share of <em>trees</em>?</h1>
@@ -549,23 +388,14 @@
     </p>
   </section>
 
-  <!-- ② STATS BAR ──────────────────────────────────────────── -->
+  <!-- STATS BAR ─────────────────────────────────────────────── -->
   <div class="stats-bar">
-    <div class="stat">
-      <div class="stat-number">666,134</div>
-      <div class="stat-label">Trees counted in 2015</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">195</div>
-      <div class="stat-label">Neighborhoods analyzed</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">5</div>
-      <div class="stat-label">Boroughs compared</div>
-    </div>
+    <div class="stat"><div class="stat-number">666,134</div><div class="stat-label">Trees counted in 2015</div></div>
+    <div class="stat"><div class="stat-number">195</div><div class="stat-label">Neighborhoods analyzed</div></div>
+    <div class="stat"><div class="stat-number">5</div><div class="stat-label">Boroughs compared</div></div>
   </div>
 
-  <!-- ③ HOW TO USE ─────────────────────────────────────────── -->
+  <!-- HOW TO USE ────────────────────────────────────────────── -->
   <div class="how-to">
     <div class="section-label">How to use the map</div>
     <div class="tips-grid">
@@ -582,104 +412,126 @@
         <p><strong>Red markers</strong> show the 15 most underserved neighborhoods, where low tree cover and low income overlap</p>
       </div>
       <div class="tip">
-        <div class="tip-icon">🔍</div>
-        <p><strong>Zoom and pan</strong> across all five boroughs down to neighborhood level</p>
+        <div class="tip-icon">📊</div>
+        <p><strong>Switch tabs</strong> above to compare boroughs side by side or see the heat vulnerability ranking</p>
       </div>
     </div>
   </div>
 
-  <!-- ④ DASHBOARD MAP ──────────────────────────────────────── -->
-  <div class="dashboard">
-
-    <!-- Map column -->
-    <div class="map-col">
-      <div class="filter-panel">
-        <div class="filter-title">Layers</div>
-        <label class="filter-label">
-          <input type="checkbox" class="filter-cb" data-layer="density" checked>
-          Tree Density
-        </label>
-        <label class="filter-label">
-          <input type="checkbox" class="filter-cb" data-layer="income">
-          Income
-        </label>
-        <label class="filter-label">
-          <input type="checkbox" class="filter-cb" data-layer="underserved">
-          Underserved
-        </label>
-        <label class="filter-label">
-          <input type="checkbox" class="filter-cb" data-layer="heat">
-          Heat
-        </label>
-      </div>
-      <iframe
-        id="map-frame"
-        src="nyc_trees_map.html"
-        title="NYC Green Space Inequity — Interactive Map"
-        allowfullscreen
-      ></iframe>
-    </div>
-
-    <!-- Right panel -->
-    <div class="panel-col">
-      <div class="panel-header">
-        <div class="panel-eyebrow">Select neighborhood to analyse</div>
-        <div class="metric-tabs">
-          <button class="mtab active" data-tab="trees">TREES</button>
-          <button class="mtab" data-tab="income">INCOME</button>
-          <button class="mtab" data-tab="equity">EQUITY</button>
-          <button class="mtab" data-tab="heat">HEAT</button>
+  <!-- ① GEO MAP TAB ────────────────────────────────────────── -->
+  <div id="tab-geomap" class="tab-view active">
+    <div class="dashboard">
+      <div class="map-col">
+        <div class="filter-panel">
+          <div class="filter-title">Layers</div>
+          <label class="filter-label"><input type="checkbox" class="filter-cb" data-layer="density" checked> Tree Density</label>
+          <label class="filter-label"><input type="checkbox" class="filter-cb" data-layer="income"> Income</label>
+          <label class="filter-label"><input type="checkbox" class="filter-cb" data-layer="underserved"> Underserved</label>
+          <label class="filter-label"><input type="checkbox" class="filter-cb" data-layer="heat"> Heat</label>
         </div>
+        <iframe id="map-frame" src="nyc_trees_map.html" title="NYC Green Space Inequity — Interactive Map" allowfullscreen></iframe>
       </div>
-      <div class="panel-body" id="panel-body">
-        <div class="placeholder" id="placeholder">
-          <div class="ph-dashes">- -</div>
-          <div class="ph-hint">Click any neighborhood on the map to load its data</div>
+
+      <div class="panel-col">
+        <div class="panel-header">
+          <div class="panel-eyebrow">Select neighborhood to analyse</div>
+          <div class="metric-tabs">
+            <button class="mtab active" data-tab="trees">TREES</button>
+            <button class="mtab" data-tab="income">INCOME</button>
+            <button class="mtab" data-tab="equity">EQUITY</button>
+            <button class="mtab" data-tab="heat">HEAT</button>
+          </div>
         </div>
-        <div class="nta-data" id="nta-data">
-          <div class="nta-name" id="nta-name"></div>
-          <div class="nta-meta">
-            <span class="nta-boro" id="nta-boro"></span>
-            <span class="eq-badge" id="eq-badge"></span>
+        <div class="panel-body" id="panel-body">
+          <div class="placeholder" id="placeholder">
+            <div class="ph-dashes">- -</div>
+            <div class="ph-hint">Click any neighborhood on the map to load its data</div>
           </div>
-          <div class="stats-grid">
-            <div class="stat-box"><div class="sb-label">Trees 2015</div><div class="sb-value" id="s-trees"></div></div>
-            <div class="stat-box"><div class="sb-label">Density / km²</div><div class="sb-value" id="s-density"></div></div>
-            <div class="stat-box"><div class="sb-label">Median Income</div><div class="sb-value" id="s-income"></div></div>
-            <div class="stat-box"><div class="sb-label">Change vs 2005</div><div class="sb-value" id="s-change"></div></div>
-          </div>
-          <div class="score-section">
-            <div class="score-header">
-              <span class="score-title">Underserved Index</span>
-              <span class="score-num" id="score-num"></span>
+          <div class="nta-data" id="nta-data">
+            <div class="nta-name" id="nta-name"></div>
+            <div class="nta-meta">
+              <span class="nta-boro" id="nta-boro"></span>
+              <span class="eq-badge" id="eq-badge"></span>
             </div>
-            <div class="score-track"><div class="score-fill" id="score-fill"></div></div>
-            <div class="score-ends"><span>WELL-SERVED</span><span>CRITICAL</span></div>
+            <div class="stats-grid">
+              <div class="stat-box"><div class="sb-label">Trees 2015</div><div class="sb-value" id="s-trees"></div></div>
+              <div class="stat-box"><div class="sb-label">Density / km²</div><div class="sb-value" id="s-density"></div></div>
+              <div class="stat-box"><div class="sb-label">Median Income</div><div class="sb-value" id="s-income"></div></div>
+              <div class="stat-box"><div class="sb-label">Change vs 2005</div><div class="sb-value" id="s-change"></div></div>
+            </div>
+            <div class="score-section">
+              <div class="score-header">
+                <span class="score-title">Underserved Index</span>
+                <span class="score-num" id="score-num"></span>
+              </div>
+              <div class="score-track"><div class="score-fill" id="score-fill"></div></div>
+              <div class="score-ends"><span>WELL-SERVED</span><span>CRITICAL</span></div>
+            </div>
+            <div class="panel-divider"></div>
+            <div class="nta-summary" id="nta-summary"></div>
           </div>
-          <div class="panel-divider"></div>
-          <div class="nta-summary" id="nta-summary"></div>
         </div>
       </div>
     </div>
 
-  </div><!-- /.dashboard -->
+    <div class="ticker">
+      <div class="ticker-tag">DATA</div>
+      <div class="ticker-track">
+        <div class="ticker-inner">
+          <span class="ticker-item"><b>MOST UNDERSERVED</b> Hunts Point, Bronx &nbsp;·&nbsp; Score 0.89</span>
+          <span class="ticker-item"><b>HIGHEST DENSITY</b> Tottenville, Staten Island &nbsp;·&nbsp; 1,295 trees / km²</span>
+          <span class="ticker-item"><b>TOTAL TREES 2015</b> 666,134 across 195 neighborhoods</span>
+          <span class="ticker-item"><b>MOST UNDERSERVED</b> Hunts Point, Bronx &nbsp;·&nbsp; Score 0.89</span>
+          <span class="ticker-item"><b>HIGHEST DENSITY</b> Tottenville, Staten Island &nbsp;·&nbsp; 1,295 trees / km²</span>
+          <span class="ticker-item"><b>TOTAL TREES 2015</b> 666,134 across 195 neighborhoods</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /#tab-geomap -->
 
-  <!-- TICKER (below dashboard) ─────────────────────────────── -->
-  <div class="ticker">
-    <div class="ticker-tag">DATA</div>
-    <div class="ticker-track">
-      <div class="ticker-inner">
-        <span class="ticker-item"><b>MOST UNDERSERVED</b> Hunts Point, Bronx &nbsp;·&nbsp; Score 0.89</span>
-        <span class="ticker-item"><b>HIGHEST DENSITY</b> Tottenville, Staten Island &nbsp;·&nbsp; 1,295 trees / km²</span>
-        <span class="ticker-item"><b>TOTAL TREES 2015</b> 666,134 across 195 neighborhoods</span>
-        <span class="ticker-item"><b>MOST UNDERSERVED</b> Hunts Point, Bronx &nbsp;·&nbsp; Score 0.89</span>
-        <span class="ticker-item"><b>HIGHEST DENSITY</b> Tottenville, Staten Island &nbsp;·&nbsp; 1,295 trees / km²</span>
-        <span class="ticker-item"><b>TOTAL TREES 2015</b> 666,134 across 195 neighborhoods</span>
+  <!-- ② BOROUGH STATS TAB ──────────────────────────────────── -->
+  <div id="tab-borough" class="tab-view">
+    <div class="tabview-inner">
+      <div class="tv-header">
+        <div class="tv-title">Borough Statistics — Tree Equity Comparison</div>
+        <div class="tv-sub">Average tree density, median income, and underserved neighborhood count across all 5 boroughs</div>
+      </div>
+      <div id="borough-loading" class="loading-msg">Loading data from map...</div>
+      <div id="borough-content" style="display:none">
+        <div class="charts-grid" id="borough-charts"></div>
+        <div class="borough-table-wrap">
+          <table class="borough-table" id="borough-table">
+            <thead>
+              <tr>
+                <th>Borough</th>
+                <th>Total Trees</th>
+                <th>Avg Density (trees/km²)</th>
+                <th>Avg Median Income</th>
+                <th>Underserved NTAs</th>
+              </tr>
+            </thead>
+            <tbody id="borough-tbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ⑤ KEY FINDINGS ──────────────────────────────────────── -->
+  <!-- ③ HEAT INDEX TAB ─────────────────────────────────────── -->
+  <div id="tab-heat" class="tab-view">
+    <div class="tabview-inner">
+      <div class="tv-header">
+        <div class="tv-title">Urban Heat Vulnerability — Top 20 Neighborhoods</div>
+        <div class="tv-sub">Ranked by combined heat proxy score (low tree density + low income = higher heat risk)</div>
+      </div>
+      <div id="heat-loading" class="loading-msg">Loading data from map...</div>
+      <div id="heat-content" style="display:none">
+        <div class="heat-grid" id="heat-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEY FINDINGS ───────────────────────────────────────────── -->
   <div class="findings">
     <div class="section-label">Key findings</div>
     <div class="findings-grid">
@@ -702,7 +554,7 @@
     </div>
   </div>
 
-  <!-- ⑥ FOOTER ─────────────────────────────────────────────── -->
+  <!-- FOOTER ─────────────────────────────────────────────────── -->
   <footer>
     <div class="footer-inner">
       <div class="footer-row">
@@ -712,13 +564,11 @@
           <span>·</span>
           <a href="https://data.cityofnewyork.us/resource/29bw-z7pj" target="_blank" rel="noopener">NYC Street Tree Census 2005</a>
           <span>·</span>
-          <a href="https://data.cityofnewyork.us/Environment/2015-Street-Tree-Census-Tree-Data/uvpi-gqnh" target="_blank" rel="noopener">NYC Neighborhood Tabulation Areas</a>
+          <a href="https://data.cityofnewyork.us/api/geospatial/d3qk-6yt9?method=export&type=GeoJSON" target="_blank" rel="noopener">NYC Neighborhood Tabulation Areas</a>
           <span>·</span>
           <span>NYC Dept. of Parks &amp; Recreation</span>
         </div>
-        <a class="footer-credit" href="https://github.com/j3ssc0des/Enviromental-Equity-In-NYC" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none;">
-          View on GitHub
-        </a>
+        <a class="footer-credit" href="https://github.com/j3ssc0des/Enviromental-Equity-In-NYC" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none;">View on GitHub</a>
       </div>
       <div class="footer-row">
         <div class="footer-credit">Built with Python, GeoPandas &amp; Folium. Deployed via GitHub Pages.</div>
@@ -729,173 +579,334 @@
     </div>
   </footer>
 
-  <script>
-  // ── EQUITY CONFIG ───────────────────────────────────────────
-  const EQ = {
-    'Well-Served':     { bg:'rgba(47,160,94,0.12)',  border:'#2fa05e', text:'#2fa05e'  },
-    'Adequate':        { bg:'rgba(168,230,191,0.12)',border:'#a8e6bf', text:'#a8e6bf'  },
-    'Needs Attention': { bg:'rgba(245,184,0,0.12)',  border:'#f5b800', text:'#f5b800'  },
-    'Underserved':     { bg:'rgba(217,79,0,0.12)',   border:'#d94f00', text:'#d94f00'  },
-    'Critical':        { bg:'rgba(109,0,0,0.15)',    border:'#c0392b', text:'#c0392b'  },
-  };
+<script>
+/* ── SHARED STATE ──────────────────────────────────────────── */
+let ntaData = [];
+let boroughBuilt = false;
+let heatBuilt    = false;
 
-  function scoreToColor(v) {
-    if (v <= 0.5) {
-      const t = v / 0.5;
-      return `rgb(${Math.round(47+t*198)},${Math.round(160+t*24)},${Math.round(94-t*94)})`;
-    }
-    const t = (v - 0.5) / 0.5;
-    return `rgb(${Math.round(245+t*(109-245))},${Math.round(184-t*184)},0)`;
+/* ── EQUITY CONFIG ─────────────────────────────────────────── */
+const EQ = {
+  'Well-Served':     { bg:'rgba(47,160,94,0.12)',  border:'#2fa05e', text:'#2fa05e' },
+  'Adequate':        { bg:'rgba(168,230,191,0.12)',border:'#a8e6bf', text:'#a8e6bf' },
+  'Needs Attention': { bg:'rgba(245,184,0,0.12)',  border:'#f5b800', text:'#f5b800' },
+  'Underserved':     { bg:'rgba(217,79,0,0.12)',   border:'#d94f00', text:'#d94f00' },
+  'Critical':        { bg:'rgba(109,0,0,0.15)',    border:'#c0392b', text:'#c0392b' },
+};
+
+function scoreToColor(v) {
+  if (v <= 0.5) {
+    const t = v / 0.5;
+    return `rgb(${Math.round(47+t*198)},${Math.round(160+t*24)},${Math.round(94-t*94)})`;
   }
+  const t = (v-0.5)/0.5;
+  return `rgb(${Math.round(245+t*(109-245))},${Math.round(184-t*184)},0)`;
+}
 
-  function makeSummary(p) {
-    const name    = p.nta_name || 'This neighborhood';
-    const density = Math.round(parseFloat(p.density_2015) || 0);
-    const income  = parseInt(p.median_income) || 0;
-    const change  = parseInt(p.tree_change)   || 0;
-    const label   = p.equity_label || 'Adequate';
-    const cStr    = change >= 0
-      ? `gained ${change.toLocaleString()} trees`
-      : `lost ${Math.abs(change).toLocaleString()} trees`;
+function heatColor(v) {
+  // orange (#d94f00) → dark red (#6d0000)
+  const r = Math.round(217 + v*(109-217));
+  const g = Math.round(79  + v*(0-79));
+  return `rgb(${r},${g},0)`;
+}
 
-    if (label === 'Critical')
-      return `${name} is among NYC's most underserved neighborhoods for green space. With only ${density} trees per km² and a median income of $${income.toLocaleString()}, it faces the sharpest need for street-tree investment.`;
-    if (label === 'Underserved')
-      return `${name} falls well below the city average. At ${density} trees per km², it ${cStr} between 2005 and 2015. The gap with wealthier areas remains large.`;
-    if (label === 'Needs Attention')
-      return `${name} sits below the citywide average at ${density} trees per km². It ${cStr} since 2005. Targeted planting could meaningfully improve conditions here.`;
-    if (label === 'Well-Served')
-      return `${name} is among NYC's greener neighborhoods at ${density} trees per km². It ${cStr} since 2005, reflecting consistent investment in street-tree canopy.`;
-    return `${name} has average tree coverage at ${density} trees per km² and ${cStr} between 2005 and 2015.`;
-  }
+function heatLabel(v) {
+  if (v >= 0.75) return { text:'CRITICAL', bg:'rgba(109,0,0,0.2)',   border:'#c0392b', text2:'#c0392b' };
+  if (v >= 0.55) return { text:'HIGH',     bg:'rgba(217,79,0,0.15)', border:'#d94f00', text2:'#d94f00' };
+  if (v >= 0.35) return { text:'MODERATE', bg:'rgba(245,184,0,0.12)',border:'#f5b800', text2:'#f5b800' };
+  return               { text:'LOW',       bg:'rgba(47,160,94,0.12)',border:'#2fa05e', text2:'#2fa05e' };
+}
 
-  // ── PANEL UPDATE ────────────────────────────────────────────
-  function updatePanel(p) {
-    const label  = p.equity_label || 'Adequate';
-    const colors = EQ[label] || EQ['Adequate'];
-    const trees  = parseInt(p.trees_2015)    || 0;
-    const dens   = (parseFloat(p.density_2015) || 0).toFixed(1);
-    const income = parseInt(p.median_income) || 0;
-    const change = parseInt(p.tree_change)   || 0;
-    const score  = parseFloat(p.underserved) || 0;
+function makeSummary(p) {
+  const name    = p.nta_name || 'This neighborhood';
+  const density = Math.round(parseFloat(p.density_2015)||0);
+  const income  = parseInt(p.median_income)||0;
+  const change  = parseInt(p.tree_change)||0;
+  const label   = p.equity_label||'Adequate';
+  const cStr    = change >= 0 ? `gained ${change.toLocaleString()} trees` : `lost ${Math.abs(change).toLocaleString()} trees`;
+  if (label==='Critical')
+    return `${name} is among NYC's most underserved neighborhoods for green space. With only ${density} trees per km² and a median income of $${income.toLocaleString()}, it faces the sharpest need for street-tree investment.`;
+  if (label==='Underserved')
+    return `${name} falls well below the city average. At ${density} trees per km², it ${cStr} between 2005 and 2015. The gap with wealthier areas remains large.`;
+  if (label==='Needs Attention')
+    return `${name} sits below the citywide average at ${density} trees per km². It ${cStr} since 2005. Targeted planting could meaningfully improve conditions here.`;
+  if (label==='Well-Served')
+    return `${name} is among NYC's greener neighborhoods at ${density} trees per km². It ${cStr} since 2005, reflecting consistent investment in street-tree canopy.`;
+  return `${name} has average tree coverage at ${density} trees per km² and ${cStr} between 2005 and 2015.`;
+}
 
-    document.getElementById('nta-name').textContent = p.nta_name || '—';
-    document.getElementById('nta-boro').textContent = (p.boro_name || p.borough || '').toUpperCase();
+/* ── GEO MAP PANEL UPDATE ──────────────────────────────────── */
+function updatePanel(p) {
+  const label  = p.equity_label||'Adequate';
+  const colors = EQ[label]||EQ['Adequate'];
+  const trees  = parseInt(p.trees_2015)||0;
+  const dens   = (parseFloat(p.density_2015)||0).toFixed(1);
+  const income = parseInt(p.median_income)||0;
+  const change = parseInt(p.tree_change)||0;
+  const score  = parseFloat(p.underserved)||0;
 
-    const badge = document.getElementById('eq-badge');
-    badge.textContent        = label.toUpperCase();
-    badge.style.background   = colors.bg;
-    badge.style.border       = `1px solid ${colors.border}`;
-    badge.style.color        = colors.text;
+  document.getElementById('nta-name').textContent = p.nta_name||'—';
+  document.getElementById('nta-boro').textContent = (p.boro_name||p.borough||'').toUpperCase();
+  const badge = document.getElementById('eq-badge');
+  badge.textContent = label.toUpperCase();
+  badge.style.cssText = `background:${colors.bg};border:1px solid ${colors.border};color:${colors.text}`;
 
-    document.getElementById('s-trees').textContent   = trees.toLocaleString();
-    document.getElementById('s-density').textContent = dens;
-    document.getElementById('s-income').textContent  = '$' + income.toLocaleString();
+  document.getElementById('s-trees').textContent   = trees.toLocaleString();
+  document.getElementById('s-density').textContent = dens;
+  document.getElementById('s-income').textContent  = '$'+income.toLocaleString();
+  const chEl = document.getElementById('s-change');
+  chEl.textContent = (change>=0?'+':'')+change.toLocaleString();
+  chEl.className   = 'sb-value'+(change<0?' neg':'');
 
-    const chEl = document.getElementById('s-change');
-    chEl.textContent = (change >= 0 ? '+' : '') + change.toLocaleString();
-    chEl.className   = 'sb-value' + (change < 0 ? ' neg' : '');
+  document.getElementById('score-num').textContent = score.toFixed(3);
+  const fill = document.getElementById('score-fill');
+  fill.style.width      = (Math.min(score,1)*100)+'%';
+  fill.style.background = scoreToColor(score);
+  document.getElementById('nta-summary').textContent = makeSummary(p);
 
-    document.getElementById('score-num').textContent = score.toFixed(3);
-    const fill = document.getElementById('score-fill');
-    fill.style.width      = (Math.min(score, 1) * 100) + '%';
-    fill.style.background = scoreToColor(score);
+  document.getElementById('placeholder').style.display = 'none';
+  const data = document.getElementById('nta-data');
+  data.classList.remove('visible');
+  void data.offsetWidth;
+  data.classList.add('visible');
+}
 
-    document.getElementById('nta-summary').textContent = makeSummary(p);
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type==='nta_click') updatePanel(e.data.props);
+});
 
-    document.getElementById('placeholder').style.display = 'none';
-    const data = document.getElementById('nta-data');
-    data.classList.remove('visible');
-    void data.offsetWidth;
-    data.classList.add('visible');
-  }
+/* ── BOROUGH STATS ─────────────────────────────────────────── */
+function buildBoroughStats() {
+  if (boroughBuilt || !ntaData.length) return;
+  boroughBuilt = true;
 
-  // ── postMessage LISTENER ────────────────────────────────────
-  window.addEventListener('message', function(e) {
-    if (e.data && e.data.type === 'nta_click') updatePanel(e.data.props);
+  // Aggregate by borough
+  const agg = {};
+  ntaData.forEach(function(d) {
+    const b = d.boro_name || d.borough || 'Unknown';
+    if (!agg[b]) agg[b] = { trees:0, density:[], income:[], underserved:0, ntaCount:0 };
+    agg[b].trees   += parseInt(d.trees_2015)||0;
+    agg[b].density.push(parseFloat(d.density_2015)||0);
+    agg[b].income.push(parseInt(d.median_income)||0);
+    if ((parseFloat(d.underserved)||0) > 0.65) agg[b].underserved++;
+    agg[b].ntaCount++;
   });
 
-  // ── IFRAME INJECTION ────────────────────────────────────────
-  const mapFrame = document.getElementById('map-frame');
+  const avg = arr => arr.reduce((a,v)=>a+v,0)/arr.length;
+  const boroughs = Object.entries(agg).map(([name,d]) => ({
+    name, totalTrees:d.trees, ntaCount:d.ntaCount,
+    avgDensity: avg(d.density),
+    avgIncome:  avg(d.income),
+    underservedCount: d.underserved,
+  })).sort((a,b) => b.avgDensity - a.avgDensity);
 
-  function injectIntoIframe() {
-    try {
-      const iDoc = mapFrame.contentDocument;
-      const iWin = mapFrame.contentWindow;
-      if (!iDoc || !iWin || !iWin.L) { setTimeout(injectIntoIframe, 400); return; }
-      if (iWin.__dbInjected) return;
-      iWin.__dbInjected = true;
+  // Bar chart helper
+  function makeBarChart(title, items, color) {
+    const max = Math.max(...items.map(i=>i.val));
+    const rows = items.map(i => {
+      const pct = max>0 ? (i.val/max)*100 : 0;
+      return `<div class="bar-row">
+        <div class="bar-boro">${i.name}</div>
+        <div class="bar-track-wrap">
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${pct}%;background:${color}"></div>
+          </div>
+          <span class="bar-val">${i.display}</span>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="chart-panel">
+      <div class="chart-panel-title">${title}</div>
+      ${rows}
+    </div>`;
+  }
 
-      const s = iDoc.createElement('script');
-      s.textContent = `(function(){
-        var map = null;
-        for (var k in window) {
-          try { var v=window[k]; if(v&&typeof v==='object'&&v.getZoom&&v.eachLayer){map=v;break;} } catch(e){}
-        }
-        if (!map) return;
-        window.__layerMap = {};
-        for (var k in window) {
-          try {
-            var v=window[k];
-            if (v&&v._layers&&Array.isArray(v._layers)) {
-              v._layers.forEach(function(item){ if(item.overlay&&item.name) window.__layerMap[item.name]=item.layer; });
+  const densityItems   = boroughs.map(b=>({ name:b.name, val:b.avgDensity,       display: Math.round(b.avgDensity).toLocaleString() }));
+  const incomeItems    = boroughs.map(b=>({ name:b.name, val:b.avgIncome,         display: '$'+Math.round(b.avgIncome/1000)+'k' }));
+  const undersvItems   = boroughs.sort((a,b2)=>b2.underservedCount-a.underservedCount)
+                          .map(b=>({ name:b.name, val:b.underservedCount, display: b.underservedCount+' NTAs' }));
+
+  document.getElementById('borough-charts').innerHTML =
+    makeBarChart('AVG TREE DENSITY (trees / km²)', densityItems,  '#2fa05e') +
+    makeBarChart('AVG MEDIAN INCOME ($)',           incomeItems,   '#7c52e0') +
+    makeBarChart('UNDERSERVED NTAs (score > 0.65)', undersvItems,  '#d94f00');
+
+  // Re-sort by density for table
+  const tableRows = [...boroughs].sort((a,b)=>b.avgDensity-a.avgDensity).map(b => `
+    <tr>
+      <td><strong>${b.name}</strong></td>
+      <td class="mono-val">${b.totalTrees.toLocaleString()}</td>
+      <td class="mono-val">${Math.round(b.avgDensity).toLocaleString()}</td>
+      <td class="mono-val">$${Math.round(b.avgIncome).toLocaleString()}</td>
+      <td class="mono-val">${b.underservedCount}</td>
+    </tr>`).join('');
+  document.getElementById('borough-tbody').innerHTML = tableRows;
+
+  document.getElementById('borough-loading').style.display = 'none';
+  document.getElementById('borough-content').style.display = 'block';
+}
+
+/* ── HEAT INDEX ────────────────────────────────────────────── */
+function buildHeatIndex() {
+  if (heatBuilt || !ntaData.length) return;
+  heatBuilt = true;
+
+  const sorted = ntaData
+    .filter(d => d.heat_proxy != null)
+    .map(d => ({ ...d, _heat: parseFloat(d.heat_proxy)||0 }))
+    .sort((a,b) => b._heat - a._heat)
+    .slice(0, 20);
+
+  const maxHeat = sorted[0] ? sorted[0]._heat : 1;
+
+  const cards = sorted.map((d, i) => {
+    const heat     = d._heat;
+    const pct      = (heat/maxHeat)*100;
+    const lbl      = heatLabel(heat);
+    const density  = (parseFloat(d.density_2015)||0).toFixed(0);
+    const income   = parseInt(d.median_income)||0;
+    const boro     = (d.boro_name||d.borough||'').toUpperCase();
+
+    return `<div class="heat-card">
+      <div class="heat-card-top">
+        <div>
+          <div class="heat-nta">${d.nta_name||'—'}</div>
+          <div class="heat-boro">${boro}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="heat-rank">#${i+1}</div>
+          <div class="heat-label-badge" style="background:${lbl.bg};border:1px solid ${lbl.border};color:${lbl.text2}">${lbl.text}</div>
+        </div>
+      </div>
+      <div class="heat-bar-wrap">
+        <div class="heat-bar-track">
+          <div class="heat-bar-fill" style="width:${pct}%;background:${heatColor(heat)}"></div>
+        </div>
+        <div class="heat-bar-ends"><span>LOWER RISK</span><span>${heat.toFixed(3)}</span></div>
+      </div>
+      <div class="heat-stats">
+        <div class="heat-stat">🌳 Density <span>${density} / km²</span></div>
+        <div class="heat-stat">💵 Income <span>$${income.toLocaleString()}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('heat-grid').innerHTML = cards;
+  document.getElementById('heat-loading').style.display = 'none';
+  document.getElementById('heat-content').style.display = 'block';
+}
+
+/* ── IFRAME INJECTION ──────────────────────────────────────── */
+const mapFrame = document.getElementById('map-frame');
+
+function injectIntoIframe() {
+  try {
+    const iDoc = mapFrame.contentDocument;
+    const iWin = mapFrame.contentWindow;
+    if (!iDoc || !iWin || !iWin.L) { setTimeout(injectIntoIframe, 400); return; }
+    if (iWin.__dbInjected) return;
+    iWin.__dbInjected = true;
+
+    const s = iDoc.createElement('script');
+    s.textContent = `(function(){
+      var map=null;
+      for(var k in window){try{var v=window[k];if(v&&typeof v==='object'&&v.getZoom&&v.eachLayer){map=v;break;}}catch(e){}}
+      if(!map) return;
+
+      /* Layer name lookup */
+      window.__layerMap={};
+      for(var k in window){try{var v=window[k];if(v&&v._layers&&Array.isArray(v._layers)){v._layers.forEach(function(item){if(item.overlay&&item.name)window.__layerMap[item.name]=item.layer;});}}catch(e){}}
+
+      /* Collect NTA data + attach click handlers */
+      window.__ntaData=[];
+      var _seen={};
+      function attach(layer){
+        if(!layer) return;
+        if(layer.eachLayer){
+          layer.eachLayer(function(sub){
+            if(sub.feature&&sub.feature.properties){
+              var props=sub.feature.properties;
+              var name=props.nta_name;
+              if(name&&!_seen[name]){_seen[name]=true;window.__ntaData.push(props);}
+              sub.on('click',function(e){
+                window.parent.postMessage({type:'nta_click',props:e.target.feature.properties},'*');
+              });
             }
-          } catch(e){}
+            attach(sub);
+          });
         }
-        function attach(layer) {
-          if (!layer) return;
-          if (layer.eachLayer) {
-            layer.eachLayer(function(sub) {
-              if (sub.feature && sub.feature.properties) {
-                sub.on('click', function(e) {
-                  window.parent.postMessage({ type:'nta_click', props:e.target.feature.properties }, '*');
-                });
-              }
-              attach(sub);
-            });
-          }
+      }
+      map.eachLayer(attach);
+
+      window.__toggleLayer=function(name,show){
+        var layer=window.__layerMap[name];
+        if(!layer) return;
+        if(show) layer.addTo(map); else map.removeLayer(layer);
+      };
+    })();`;
+    iDoc.head.appendChild(s);
+
+    // Read back NTA data after script runs
+    setTimeout(function() {
+      try {
+        var raw = mapFrame.contentWindow.__ntaData;
+        if (raw && raw.length > 0) {
+          ntaData = raw.slice();
+          // Build tabs if already visible
+          if (!document.getElementById('tab-borough').classList.contains('active') &&
+              !document.getElementById('tab-heat').classList.contains('active')) return;
+          buildBoroughStats();
+          buildHeatIndex();
         }
-        map.eachLayer(attach);
-        window.__toggleLayer = function(name, show) {
-          var layer = window.__layerMap[name];
-          if (!layer) return;
-          if (show) layer.addTo(map); else map.removeLayer(layer);
-        };
-      })();`;
-      iDoc.head.appendChild(s);
-    } catch(e) { console.warn('iframe injection:', e); }
-  }
+      } catch(e) {}
+    }, 300);
 
-  mapFrame.addEventListener('load', function() { setTimeout(injectIntoIframe, 900); });
+  } catch(e) { console.warn('iframe injection:', e); }
+}
 
-  // ── FILTER CHECKBOXES ───────────────────────────────────────
-  const LAYER_NAMES = {
-    density:     '🌳 Tree Density (2015)',
-    income:      '💵 Median Household Income',
-    underserved: '🔴 Underserved Index',
-    heat:        '🌡 Urban Heat Vulnerability',
-  };
-  document.querySelectorAll('.filter-cb').forEach(function(cb) {
-    cb.addEventListener('change', function() {
-      const name = LAYER_NAMES[this.dataset.layer];
-      if (!name) return;
-      try { mapFrame.contentWindow.__toggleLayer && mapFrame.contentWindow.__toggleLayer(name, this.checked); } catch(e){}
-    });
-  });
+mapFrame.addEventListener('load', function() { setTimeout(injectIntoIframe, 900); });
 
-  // ── TAB INTERACTIONS ────────────────────────────────────────
-  document.querySelectorAll('.mtab').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-    });
+/* ── FILTER CHECKBOXES ─────────────────────────────────────── */
+const LAYER_NAMES = {
+  density:     '🌳 Tree Density (2015)',
+  income:      '💵 Median Household Income',
+  underserved: '🔴 Underserved Index',
+  heat:        '🌡 Urban Heat Vulnerability',
+};
+document.querySelectorAll('.filter-cb').forEach(function(cb) {
+  cb.addEventListener('change', function() {
+    const name = LAYER_NAMES[this.dataset.layer];
+    if (!name) return;
+    try { mapFrame.contentWindow.__toggleLayer && mapFrame.contentWindow.__toggleLayer(name, this.checked); } catch(e){}
   });
-  document.querySelectorAll('.nav-tab').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-    });
+});
+
+/* ── NAV TAB SWITCHING ─────────────────────────────────────── */
+document.querySelectorAll('.nav-tab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const tab = this.dataset.tab;
+
+    // Update active state
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+
+    // Switch views
+    document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+
+    // Build tab content on first visit (data may have loaded by now)
+    if (tab === 'borough') buildBoroughStats();
+    if (tab === 'heat')    buildHeatIndex();
   });
-  </script>
+});
+
+/* ── PANEL METRIC TABS ─────────────────────────────────────── */
+document.querySelectorAll('.mtab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
 </body>
 </html>
