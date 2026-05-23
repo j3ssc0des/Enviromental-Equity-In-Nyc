@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NYC Green Space Inequity</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 0.75rem; }
+
+    .tree-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .header-text h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #3fb950;
+      letter-spacing: -0.01em;
+    }
+
+    .header-text p {
+      font-size: 0.82rem;
+      color: #8b949e;
+      margin-top: 0.15rem;
+    }
+
+    .github-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: #238636;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      border: 1px solid #2ea043;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .github-btn:hover { background: #2ea043; }
+    .github-btn svg { width: 16px; height: 16px; fill: #fff; flex-shrink: 0; }
+
+    .description {
+      background: #161b22;
+      border-bottom: 1px solid #21262d;
+      padding: 1rem 1.5rem;
+      font-size: 0.9rem;
+      color: #8b949e;
+      line-height: 1.6;
+    }
+    .description strong { color: #3fb950; }
+
+    .map-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+      min-height: 70vh;
+    }
+
+    footer {
+      background: #161b22;
+      border-top: 1px solid #30363d;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: #8b949e;
+    }
+
+    .data-sources { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+
+    .data-sources span { color: #8b949e; }
+
+    footer a {
+      color: #3fb950;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    footer a:hover { color: #52d668; text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .header-text h1 { font-size: 1.1rem; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <div class="tree-icon">🌳</div>
+      <div class="header-text">
+        <h1>NYC Green Space Inequity</h1>
+        <p>Street Tree Census Analysis &mdash; 2005 &amp; 2015</p>
+      </div>
+    </div>
+    <a class="github-btn" href="https://github.com/jessieyou333/Enviromental-Equity-In-NYC" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+          -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+          .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+          -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+          .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+          .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+          0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+      View on GitHub
+    </a>
+  </header>
+
+  <div class="description">
+    This project examines <strong>green space inequity</strong> across New York City's 90
+    Neighborhood Tabulation Areas by comparing tree canopy density with median household income
+    from the 2005 and 2015 NYC Street Tree Census. Neighborhoods in the Bronx and parts of
+    Brooklyn consistently show fewer trees per capita despite having lower incomes&mdash;a
+    pattern that compounds environmental and public-health disparities.
+    Explore the interactive map below to see how your neighborhood stacks up.
+  </div>
+
+  <div class="map-wrapper">
+    <iframe
+      src="nyc_trees_map.html"
+      title="NYC Green Space Inequity Interactive Map"
+      loading="lazy"
+      allowfullscreen
+    ></iframe>
+  </div>
+
+  <footer>
+    <div class="data-sources">
+      <span>Data sources:</span>
+      <a href="https://data.cityofnewyork.us/resource/uvpi-gqnh" target="_blank" rel="noopener">
+        NYC Street Tree Census 2015
+      </a>
+      <a href="https://data.cityofnewyork.us/resource/29bw-z7pj" target="_blank" rel="noopener">
+        NYC Street Tree Census 2005
+      </a>
+    </div>
+    <span>NYC Open Data &mdash; Department of Parks &amp; Recreation</span>
+  </footer>
+
+</body>
+</html>
