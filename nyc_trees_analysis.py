@@ -526,7 +526,10 @@ total_trees = f"{int(merged['trees_2015'].sum()):,}"
 n_ntas      = str(len(merged))
 pct_gain    = str(round((merged['trees_2015'].sum() - merged['trees_2005'].sum())
                          / merged['trees_2005'].sum() * 100, 1))
-data_label  = "Live NYC Open Data" if live_ok else "Embedded dataset"
+if live_ok:
+    badge_bg, badge_border, badge_dot, badge_text = "#0d2b1a", "#2fa05e", "#2fa05e", "Live NYC Open Data"
+else:
+    badge_bg, badge_border, badge_dot, badge_text = "#2b2200", "#f5b800", "#f5b800", "Embedded dataset"
 
 title_html = (
     "<style>"
@@ -535,12 +538,18 @@ title_html = (
     "border:1px solid #2fa05e;border-left:4px solid #2fa05e;padding:12px 18px 10px;"
     "border-radius:4px;box-shadow:0 4px 24px rgba(0,0,0,0.6);max-width:310px;backdrop-filter:blur(8px)}"
     ".mtc h2{margin:0;font-family:'Space Mono',monospace;font-size:12px;color:#2fa05e;letter-spacing:1px;text-transform:uppercase}"
-    ".mtc h1{margin:2px 0 4px;font-family:'DM Sans',sans-serif;font-size:19px;font-weight:600;color:#f0f0f0;line-height:1.2}"
+    ".mtc h1{margin:2px 0 6px;font-family:'DM Sans',sans-serif;font-size:19px;font-weight:600;color:#f0f0f0;line-height:1.2}"
     ".mtc p{margin:0;font-family:'DM Sans',sans-serif;font-size:11px;color:#888;line-height:1.5}"
     ".mtc .sr{margin-top:8px;display:flex;gap:12px}"
     ".mtc .st{text-align:center}"
     ".mtc .sv{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:#5cc98a}"
     ".mtc .sl{font-family:'DM Sans',sans-serif;font-size:9px;color:#777;text-transform:uppercase;letter-spacing:0.5px}"
+    ".mtc .badge{display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;"
+    f"background:{badge_bg};border:1px solid {badge_border};border-radius:3px;"
+    "padding:3px 8px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.4px}"
+    f".mtc .badge .dot{{width:6px;height:6px;border-radius:50%;background:{badge_dot};"
+    "flex-shrink:0;box-shadow:0 0 4px currentColor}}"
+    f".mtc .badge span{{color:{badge_border}}}"
     ".eql{position:fixed;bottom:36px;left:54px;z-index:9999;background:rgba(10,10,18,0.90);"
     "border:1px solid #333;padding:10px 14px;border-radius:4px;font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(0,0,0,0.5)}"
     ".eql h4{margin:0 0 6px;font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:1px}"
@@ -551,7 +560,7 @@ title_html = (
     "<div class='mtc'>"
     "<h2>NYC Parks Analysis</h2>"
     "<h1>Green Space Inequity<br>Street Tree Census</h1>"
-    f"<p>Tree density, income &amp; urban heat by neighbourhood · {data_label}</p>"
+    f"<div class='badge'><div class='dot'></div><span>{badge_text}</span></div>"
     "<div class='sr'>"
     f"<div class='st'><div class='sv'>{total_trees}</div><div class='sl'>Trees 2015</div></div>"
     f"<div class='st'><div class='sv'>{n_ntas}</div><div class='sl'>NTAs</div></div>"

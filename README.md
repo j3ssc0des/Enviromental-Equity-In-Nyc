@@ -11,7 +11,7 @@ An interactive map exploring green space inequity across NYC neighborhoods using
 
 Every decade, NYC Parks counts every street tree in the city. The data tells a story that goes beyond parks and sidewalks — neighborhoods with fewer trees are hotter in summer, have worse air quality, and tend to have lower median incomes.
 
-This project analyzes two census snapshots (2005 and 2015) to quantify that inequity at the neighborhood level. Using an underserved index that weights both tree density and household income, it identifies the neighborhoods most in need of green infrastructure investment — from Hunts Point and Mott Haven in the Bronx to East New York and Brownsville in Brooklyn.
+This project analyzes two census snapshots (2005 and 2015) to quantify that inequity at the neighborhood level. Using an underserved index that weights both tree density and household income, it identifies the neighborhoods most in need of green infrastructure investment — from Hunts Point and Mott Haven in the Bronx to East New York and Brownsville in Brooklyn. The 2025 census is currently underway — this map will be updated when results are published.
 
 ## Map Layers
 
