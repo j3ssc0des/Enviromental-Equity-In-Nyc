@@ -209,7 +209,7 @@ if LIVE_DATA:
             "?method=export&type=GeoJSON",
             timeout=60,
         )
-        gdf_raw = gpd.read_file(io.StringIO(r.text))
+        gdf_raw = gpd.read_file(io.BytesIO(r.content))
         gdf_raw.columns = gdf_raw.columns.str.lower()
 
         # Normalise column names across API versions
@@ -403,7 +403,7 @@ HEAT_CM = LinearColormap(
 
 # ── Map object ───────────────────────────────────────────────────
 m = folium.Map(
-    location=[40.710, -73.970],
+    location=[40.7128, -74.0060],
     zoom_start=11,
     tiles=None,
     control_scale=True,
@@ -510,14 +510,6 @@ HeatMap(heat_pts, min_opacity=0.3, radius=25, blur=20,
         ).add_to(heat_fg)
 heat_fg.add_to(m)
 
-# ── Colour map legends ───────────────────────────────────────────
-for cm in [DENSITY_CM, INCOME_CM, UNDERSERVED_CM, CHANGE_CM, HEAT_CM]:
-    cm.add_to(m)
-
-# ── Mini-map ─────────────────────────────────────────────────────
-MiniMap(toggle_display=True, tile_layer="CartoDB dark_matter",
-        position="bottomleft", zoom_level_offset=-6).add_to(m)
-
 # ── Layer control ────────────────────────────────────────────────
 LayerControl(collapsed=False, position="topright").add_to(m)
 
@@ -526,41 +518,27 @@ total_trees = f"{int(merged['trees_2015'].sum()):,}"
 n_ntas      = str(len(merged))
 pct_gain    = str(round((merged['trees_2015'].sum() - merged['trees_2005'].sum())
                          / merged['trees_2005'].sum() * 100, 1))
-if live_ok:
-    badge_bg, badge_border, badge_dot, badge_text = "#0d2b1a", "#2fa05e", "#2fa05e", "Live NYC Open Data"
-else:
-    badge_bg, badge_border, badge_dot, badge_text = "#2b2200", "#f5b800", "#f5b800", "Embedded dataset"
 
 title_html = (
     "<style>"
-    "@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&family=DM+Sans:wght@300;600&display=swap');"
-    ".mtc{position:fixed;top:14px;left:54px;z-index:9999;background:rgba(10,10,18,0.93);"
-    "border:1px solid #2fa05e;border-left:4px solid #2fa05e;padding:12px 18px 10px;"
-    "border-radius:4px;box-shadow:0 4px 24px rgba(0,0,0,0.6);max-width:310px;backdrop-filter:blur(8px)}"
-    ".mtc h2{margin:0;font-family:'Space Mono',monospace;font-size:12px;color:#2fa05e;letter-spacing:1px;text-transform:uppercase}"
-    ".mtc h1{margin:2px 0 6px;font-family:'DM Sans',sans-serif;font-size:19px;font-weight:600;color:#f0f0f0;line-height:1.2}"
-    ".mtc p{margin:0;font-family:'DM Sans',sans-serif;font-size:11px;color:#888;line-height:1.5}"
-    ".mtc .sr{margin-top:8px;display:flex;gap:12px}"
+    "@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@500&family=DM+Sans:wght@400;600&display=swap');"
+    ".mtc{position:fixed;top:10px;left:54px;z-index:9999;background:rgba(8,12,8,0.88);"
+    "border:1px solid #2fa05e;border-left:3px solid #2fa05e;padding:8px 12px 8px;"
+    "border-radius:4px;box-shadow:0 2px 16px rgba(0,0,0,0.5);backdrop-filter:blur(8px)}"
+    ".mtc h1{margin:0 0 5px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:#e8f0e8;line-height:1.2}"
+    ".mtc .sr{display:flex;gap:10px}"
     ".mtc .st{text-align:center}"
-    ".mtc .sv{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:#5cc98a}"
-    ".mtc .sl{font-family:'DM Sans',sans-serif;font-size:9px;color:#777;text-transform:uppercase;letter-spacing:0.5px}"
-    ".mtc .badge{display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;"
-    f"background:{badge_bg};border:1px solid {badge_border};border-radius:3px;"
-    "padding:3px 8px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.4px}"
-    f".mtc .badge .dot{{width:6px;height:6px;border-radius:50%;background:{badge_dot};"
-    "flex-shrink:0;box-shadow:0 0 4px currentColor}}"
-    f".mtc .badge span{{color:{badge_border}}}"
-    ".eql{position:fixed;bottom:36px;left:54px;z-index:9999;background:rgba(10,10,18,0.90);"
-    "border:1px solid #333;padding:10px 14px;border-radius:4px;font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(0,0,0,0.5)}"
-    ".eql h4{margin:0 0 6px;font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:1px}"
-    ".eql .er{display:flex;align-items:center;gap:7px;margin:3px 0}"
-    ".eql .dt{width:11px;height:11px;border-radius:50%;flex-shrink:0}"
-    ".eql span{font-size:11px;color:#ccc}"
+    ".mtc .sv{font-family:'Space Mono',monospace;font-size:12px;font-weight:500;color:#5cc98a;line-height:1}"
+    ".mtc .sl{font-family:'DM Sans',sans-serif;font-size:8px;color:#5a7a5a;text-transform:uppercase;letter-spacing:0.5px;margin-top:1px}"
+    ".eql{position:fixed;bottom:28px;left:54px;z-index:9999;background:rgba(8,12,8,0.88);"
+    "border:1px solid #222;padding:8px 10px;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,0.4)}"
+    ".eql h4{margin:0 0 5px;font-size:9px;color:#5a7a5a;text-transform:uppercase;letter-spacing:1px;font-family:'DM Sans',sans-serif}"
+    ".eql .er{display:flex;align-items:center;gap:6px;margin:2px 0}"
+    ".eql .dt{width:9px;height:9px;border-radius:50%;flex-shrink:0}"
+    ".eql span{font-size:10px;color:#b0c8b0;font-family:'DM Sans',sans-serif}"
     "</style>"
     "<div class='mtc'>"
-    "<h2>NYC Parks Analysis</h2>"
-    "<h1>Green Space Inequity<br>Street Tree Census</h1>"
-    f"<div class='badge'><div class='dot'></div><span>{badge_text}</span></div>"
+    "<h1>🌳 NYC Green Space Inequity</h1>"
     "<div class='sr'>"
     f"<div class='st'><div class='sv'>{total_trees}</div><div class='sl'>Trees 2015</div></div>"
     f"<div class='st'><div class='sv'>{n_ntas}</div><div class='sl'>NTAs</div></div>"
