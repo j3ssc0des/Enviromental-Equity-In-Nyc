@@ -18,6 +18,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Outbound internet access to data.cityofnewyork.us is required
+    # for the live NYC Open Data API fetch; GitHub-hosted runners allow this.
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
