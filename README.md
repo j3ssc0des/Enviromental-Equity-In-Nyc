@@ -1,44 +1,34 @@
-# NYC Green Space Inequity — Street Tree Census Analysis
+# 🌳 Environmental Equity in NYC
 
-Mapping green space inequity across NYC neighborhoods using the 2005 & 2015 
-Street Tree Census — analyzing the relationship between tree density, household 
-income, and urban heat vulnerability.
+[![Live Site](https://img.shields.io/badge/Live%20Site-View%20Map-2fa05e?style=for-the-badge)](https://j3ssc0des.github.io/Enviromental-Equity-In-NYC)
+[![Data](https://img.shields.io/badge/Data-NYC%20Open%20Data-blue?style=for-the-badge)](https://opendata.cityofnewyork.us)
 
-## Overview
+An interactive map exploring green space inequity across NYC neighborhoods using the 2005 & 2015 Street Tree Census — analyzing the relationship between tree density, household income, and urban heat vulnerability.
 
-Every decade, NYC Parks counts every street tree in the city. The data tells a 
-story that goes beyond parks and sidewalks — neighborhoods with fewer trees are 
-hotter in summer, have worse air quality, and tend to have lower median incomes.
+## 🗺 [View the Live Map →](https://j3ssc0des.github.io/Enviromental-Equity-In-NYC)
 
-This project analyzes two census snapshots (2005 and 2015) to quantify that 
-inequity at the neighborhood level. Using an underserved index that weights both 
-tree density and household income, it identifies the NTAs most in need of green 
-infrastructure investment — from Hunts Point and Mott Haven in the Bronx to 
-East New York and Brownsville in Brooklyn.
+## About
 
-## Output
+Every decade, NYC Parks counts every street tree in the city. The data tells a story that goes beyond parks and sidewalks — neighborhoods with fewer trees are hotter in summer, have worse air quality, and tend to have lower median incomes.
 
-An interactive Folium map with five switchable layers:
-- 🌳 Tree density (2015)
-- 💵 Median household income
-- 🔴 Underserved index
-- 📈 Canopy change 2005→2015
-- 🌡 Urban heat vulnerability
+This project analyzes two census snapshots (2005 and 2015) to quantify that inequity at the neighborhood level. Using an underserved index that weights both tree density and household income, it identifies the neighborhoods most in need of green infrastructure investment — from Hunts Point and Mott Haven in the Bronx to East New York and Brownsville in Brooklyn.
 
-## Quick Start
+## Map Layers
 
-Open in GitHub Codespaces, then:
-
-```bash
-install-datascience.sh
-pip install geopandas folium branca shapely
-python3 nyc_trees_analysis.py
-```
-
-Right-click `nyc_trees_map.html` → **Open in Browser**.
+| Layer | Description |
+|---|---|
+| 🌳 Tree Density | Trees per km² by neighborhood (2015) |
+| 💵 Median Income | Household income by neighborhood |
+| 🔴 Underserved Index | Low density + low income combined score |
+| 📈 Canopy Change | Tree count change from 2005 to 2015 |
+| 🌡 Heat Vulnerability | Estimated urban heat risk |
 
 ## Data Sources
 
 - [NYC Street Tree Census 2015](https://data.cityofnewyork.us/resource/uvpi-gqnh)
 - [NYC Street Tree Census 2005](https://data.cityofnewyork.us/resource/29bw-z7pj)
 - [NYC Neighborhood Tabulation Areas](https://data.cityofnewyork.us/api/geospatial/d3qk-6yt9)
+
+## Built With
+
+Python · Pandas · GeoPandas · Folium · GitHub Pages · GitHub Actions
