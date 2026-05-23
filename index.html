@@ -3,461 +3,752 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NYC Green Space Inequity</title>
+  <title>NYC Green Space — Data Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --green:      #2fa05e;
-      --green-dim:  #1a6b3c;
-      --green-pale: #a8e6bf;
-      --bg:         #0a0f0a;
-      --surface:    #111811;
-      --surface2:   #182018;
-      --border:     #1e2e1e;
-      --text:       #e2ede4;
-      --muted:      #7a9e82;
-      --amber:      #f5b800;
-      --red:        #d94f00;
+      --green:        #2fa05e;
+      --green-lo:     rgba(47,160,94,0.1);
+      --green-border: rgba(47,160,94,0.25);
+      --bg:           #0a0d12;
+      --nav-bg:       #0d1117;
+      --panel-bg:     #0d1117;
+      --surface:      #111820;
+      --border:       #1a2620;
+      --text:         #cce0cc;
+      --muted:        #4d6b52;
+      --amber:        #f5b800;
+      --orange:       #d94f00;
+      --crimson:      #6d0000;
+      --mono:         "Space Mono", monospace;
+      --sans:         "DM Sans", system-ui, sans-serif;
     }
 
-    html { scroll-behavior: smooth; }
+    html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--sans); }
 
-    body {
-      font-family: "DM Sans", system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+    .app { display: flex; flex-direction: column; height: 100vh; }
 
-    /* ── STICKY HEADER ─────────────────────────────────────── */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(15, 30, 15, 0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid #2fa05e;
-      padding: 0 1.5rem;
-      height: 56px;
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      height: 50px;
+      flex-shrink: 0;
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
+      padding: 0 16px;
+      gap: 12px;
     }
 
-    .header-divider {
-      width: 1px;
-      height: 20px;
-      background: rgba(47, 160, 94, 0.35);
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--green);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .brand-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(47,160,94,0.6);
       flex-shrink: 0;
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      text-decoration: none;
-    }
-    .logo-icon { font-size: 1.4rem; line-height: 1; }
-    .logo-text {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--green);
-      letter-spacing: -0.02em;
+    .nav-tabs { display: flex; gap: 4px; }
+    .nav-tab {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
       white-space: nowrap;
     }
+    .nav-tab:hover { color: var(--green); border-color: var(--green-border); }
+    .nav-tab.active { color: var(--green); border-color: var(--green); background: var(--green-lo); }
 
-    .github-btn {
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .live-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      background: transparent;
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.8rem;
-      font-weight: 500;
-      padding: 0.35rem 0.85rem;
+      gap: 6px;
+      background: rgba(47,160,94,0.1);
+      border: 1px solid rgba(47,160,94,0.35);
+      color: var(--green);
+      border-radius: 3px;
+      padding: 3px 8px;
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+    }
+    .live-badge::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(47,160,94,0.5); }
+      50%       { opacity: 0.6; box-shadow: 0 0 0 5px rgba(47,160,94,0); }
+    }
+
+    /* ── MAIN ────────────────────────────────────────── */
+    .content { flex: 1; display: flex; overflow: hidden; }
+
+    /* ── MAP COLUMN ──────────────────────────────────── */
+    .map-col {
+      flex: 0 0 65%;
+      position: relative;
+      border-right: 1px solid var(--border);
+    }
+
+    iframe { width: 100%; height: 100%; border: none; display: block; }
+
+    /* ── FILTER OVERLAY ──────────────────────────────── */
+    .filter-panel {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 400;
+      background: rgba(10,13,18,0.92);
+      border: 1px solid var(--green-border);
       border-radius: 6px;
-      border: 1px solid var(--border);
-      transition: color 0.15s, border-color 0.15s;
-      white-space: nowrap;
+      padding: 9px 13px;
+      backdrop-filter: blur(10px);
+      min-width: 138px;
     }
-    .github-btn:hover { color: var(--green); border-color: var(--green); }
-    .github-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
-
-    /* ── HERO ──────────────────────────────────────────────── */
-    .hero {
-      padding: 3.5rem 1.5rem 2.5rem;
-      max-width: 760px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .eyebrow {
-      display: inline-block;
-      font-family: "DM Mono", monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      background: rgba(47, 160, 94, 0.1);
-      border: 1px solid rgba(47, 160, 94, 0.25);
-      border-radius: 99px;
-      padding: 0.25rem 0.85rem;
-      margin-bottom: 1.1rem;
-    }
-
-    .hero h1 {
-      font-size: clamp(1.8rem, 5vw, 2.8rem);
-      font-weight: 700;
-      line-height: 1.15;
-      letter-spacing: -0.03em;
-      color: #fff;
-      margin-bottom: 1rem;
-    }
-    .hero h1 em {
-      font-style: normal;
-      color: var(--green);
-    }
-
-    .hero p {
-      font-size: 1rem;
-      line-height: 1.7;
+    .filter-title {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.18em;
       color: var(--muted);
-      max-width: 580px;
-      margin: 0 auto;
-    }
-
-    /* ── STATS BAR ─────────────────────────────────────────── */
-    .stats-bar {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 0;
-      border-top: 1px solid var(--border);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 2rem;
+    }
+    .filter-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.76rem;
+      color: var(--text);
+      padding: 3px 0;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s;
+    }
+    .filter-label:hover { color: var(--green); }
+    .filter-cb {
+      appearance: none;
+      width: 13px; height: 13px;
+      border: 1px solid var(--muted);
+      border-radius: 2px;
+      background: transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .filter-cb:checked { background: var(--green); border-color: var(--green); }
+    .filter-cb:checked::after {
+      content: '';
+      position: absolute;
+      top: 1px; left: 3px;
+      width: 5px; height: 8px;
+      border: 2px solid #0a0d12;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
     }
 
-    .stat {
-      flex: 1;
-      min-width: 180px;
-      background: var(--surface);
-      padding: 2.25rem 1.5rem 2rem;
+    /* ── RIGHT PANEL ─────────────────────────────────── */
+    .panel-col {
+      flex: 0 0 35%;
+      background: var(--panel-bg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .panel-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 9px;
+    }
+    .metric-tabs { display: flex; gap: 3px; }
+    .mtab {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .mtab:hover { color: var(--text); border-color: var(--muted); }
+    .mtab.active { color: var(--green); border-color: var(--green); background: var(--green-lo); }
+
+    .panel-body { flex: 1; overflow-y: auto; padding: 16px; }
+    .panel-body::-webkit-scrollbar { width: 3px; }
+    .panel-body::-webkit-scrollbar-thumb { background: var(--border); }
+
+    /* Placeholder */
+    .placeholder {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .ph-dashes {
+      font-family: var(--mono);
+      font-size: 2.8rem;
+      color: var(--border);
+      letter-spacing: 0.4em;
+    }
+    .ph-hint {
+      font-size: 0.78rem;
+      color: var(--muted);
       text-align: center;
-      border-top: 2px solid var(--green);
-      margin: 0 0.75rem;
+      max-width: 190px;
+      line-height: 1.55;
     }
 
-    .stat:first-child { margin-left: 0; }
-    .stat:last-child  { margin-right: 0; }
+    /* Neighborhood data */
+    .nta-data { display: none; }
+    .nta-data.visible { display: block; animation: fadein 0.28s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
-    .stat-number {
-      font-family: "DM Mono", monospace;
-      font-size: clamp(2.8rem, 6vw, 4.5rem);
-      font-weight: 500;
+    .nta-name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+    .nta-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .nta-boro {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+    .eq-badge {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.12em;
+      padding: 2px 7px;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+
+    /* 2x2 stat grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin-bottom: 13px;
+    }
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 9px 11px;
+    }
+    .sb-label {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .sb-value {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      font-weight: 700;
       color: var(--green);
       line-height: 1;
-      margin-bottom: 0.5rem;
-      text-shadow: 0 0 30px rgba(47, 160, 94, 0.4);
     }
+    .sb-value.neg { color: var(--orange); }
 
-    .stat-label {
-      font-size: 0.78rem;
-      font-weight: 500;
+    /* Score bar */
+    .score-section { margin-bottom: 13px; }
+    .score-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 5px;
+    }
+    .score-title {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.14em;
       color: var(--muted);
       text-transform: uppercase;
+    }
+    .score-num {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--green);
+    }
+    .score-track {
+      height: 5px;
+      background: var(--surface);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 3px;
+    }
+    .score-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease, background 0.4s ease; }
+    .score-ends {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      color: var(--muted);
       letter-spacing: 0.06em;
     }
 
-    /* ── HOW TO USE ────────────────────────────────────────── */
-    .how-to {
-      max-width: 900px;
-      margin: 0 auto 2rem;
-      padding: 0 1.5rem;
+    /* Summary */
+    .nta-summary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--green);
+      border-radius: 0 5px 5px 0;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      line-height: 1.62;
+      color: var(--muted);
     }
 
-    .section-label {
-      font-family: "DM Mono", monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #4ecb80;
-      margin-bottom: 0.85rem;
-      padding-top: 2rem;
+    /* Divider */
+    .panel-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 13px 0;
     }
 
-    .tips-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 0.75rem;
-    }
-
-    .tip {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(47, 160, 94, 0.2);
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
-      display: flex;
-      gap: 0.75rem;
-      align-items: flex-start;
-    }
-
-    .tip-icon {
-      font-size: 1.2rem;
-      line-height: 1;
+    /* ── TICKER ──────────────────────────────────────── */
+    .ticker {
+      height: 36px;
       flex-shrink: 0;
-      margin-top: 0.05rem;
-    }
-
-    .tip p {
-      font-size: 0.85rem;
-      line-height: 1.5;
-      color: #e2ede4;
-    }
-    .tip p strong { color: #fff; font-weight: 600; }
-
-    /* ── MAP ───────────────────────────────────────────────── */
-    .map-section {
-      max-width: 1100px;
-      margin: 0 auto 2.5rem;
-      padding: 0 1.5rem;
-      width: 100%;
-    }
-
-    .map-frame {
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-    }
-
-    iframe {
-      display: block;
-      width: 100%;
-      height: 600px;
-      border: none;
-    }
-
-    /* ── KEY FINDINGS ──────────────────────────────────────── */
-    .findings {
-      max-width: 900px;
-      margin: 0 auto 3rem;
-      padding: 0 1.5rem;
-    }
-
-    .findings-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 0.75rem;
-    }
-
-    .finding {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--green);
-      border-radius: 0 8px 8px 0;
-      padding: 1.1rem 1.25rem;
-    }
-
-    .finding-tag {
-      font-family: "DM Mono", monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 0.4rem;
-    }
-
-    .finding p {
-      font-size: 0.9rem;
-      line-height: 1.55;
-      color: var(--text);
-    }
-
-    .finding .highlight {
-      color: var(--green);
-      font-weight: 700;
-    }
-    .finding .warn { color: var(--amber); font-weight: 700; }
-    .finding .alert { color: var(--red); font-weight: 700; }
-
-    /* ── FOOTER ────────────────────────────────────────────── */
-    footer {
-      background: var(--surface);
+      background: #080b0e;
       border-top: 1px solid var(--border);
-      padding: 1.5rem;
-    }
-
-    .footer-inner {
-      max-width: 900px;
-      margin: 0 auto;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
+      overflow: hidden;
     }
-
-    .data-sources {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.35rem 1rem;
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-
-    .data-sources a {
+    .ticker-tag {
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.16em;
       color: var(--green);
-      text-decoration: none;
+      background: var(--green-lo);
+      border-right: 1px solid var(--green-border);
+      padding: 0 14px;
+      height: 100%;
+      display: flex;
+      align-items: center;
     }
-    .data-sources a:hover { text-decoration: underline; }
-
-    .footer-credit {
-      font-size: 0.75rem;
+    .ticker-track { flex: 1; overflow: hidden; height: 100%; display: flex; align-items: center; }
+    .ticker-inner {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker-scroll 30s linear infinite;
+    }
+    .ticker-item {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
       color: var(--muted);
+      padding: 0 48px;
+    }
+    .ticker-item b { color: var(--green); font-weight: 400; }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
 
-    /* ── RESPONSIVE ────────────────────────────────────────── */
-    @media (max-width: 600px) {
-      .hero { padding: 2.5rem 1.25rem 1.75rem; }
-      iframe { height: 460px; }
-      .logo-text { font-size: 0.88rem; }
-      .footer-inner { flex-direction: column; align-items: flex-start; }
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 820px) {
+      .content { flex-direction: column; }
+      .map-col { flex: 0 0 52vh; border-right: none; border-bottom: 1px solid var(--border); }
+      .panel-col { flex: 1; }
+      .nav-tabs { display: none; }
     }
   </style>
 </head>
 <body>
+<div class="app">
 
-  <!-- STICKY HEADER -->
-  <header>
-    <a class="logo" href="#">
-      <span class="logo-icon">🌳</span>
-      <span class="logo-text">NYC Green Space Inequity</span>
-    </a>
-    <div class="header-divider" aria-hidden="true"></div>
-    <a class="github-btn" href="https://github.com/j3ssc0des/Enviromental-Equity-In-NYC" target="_blank" rel="noopener">
-      <svg viewBox="0 0 16 16" aria-hidden="true">
-        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
-          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
-          -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
-          .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
-          -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
-          .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
-          .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
-          0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-      </svg>
-      View on GitHub
-    </a>
-  </header>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="eyebrow">NYC Street Tree Census &nbsp;·&nbsp; 2005 &amp; 2015</div>
-    <h1>Does your neighborhood<br>get its fair share of <em>trees</em>?</h1>
-    <p>
-      NYC counts every street tree every decade. The numbers reveal a pattern:
-      lower-income neighborhoods consistently have fewer trees. That gap
-      means hotter streets, worse air, and compounding disadvantage.
-    </p>
-  </section>
-
-  <!-- STATS BAR -->
-  <div class="stats-bar">
-    <div class="stat">
-      <div class="stat-number">666,134</div>
-      <div class="stat-label">Trees counted in 2015</div>
+  <!-- ── NAV ─────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-brand">
+      <div class="brand-dot"></div>
+      🌳 NYC GREEN SPACE
     </div>
-    <div class="stat">
-      <div class="stat-number">195</div>
-      <div class="stat-label">Neighborhoods analyzed</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">5</div>
-      <div class="stat-label">Boroughs compared</div>
-    </div>
-  </div>
 
-  <!-- HOW TO USE -->
-  <div class="how-to">
-    <div class="section-label">How to use the map</div>
-    <div class="tips-grid">
-      <div class="tip">
-        <div class="tip-icon">👆</div>
-        <p><strong>Click any neighborhood</strong> to see its tree count, density, income, and equity score</p>
-      </div>
-      <div class="tip">
-        <div class="tip-icon">🗂</div>
-        <p><strong>Use the layer switcher</strong> (top right of map) to swap between tree density, income, and heat views</p>
-      </div>
-      <div class="tip">
-        <div class="tip-icon">🔴</div>
-        <p><strong>Red markers</strong> show the 15 most underserved neighborhoods, where low tree cover and low income overlap</p>
-      </div>
-      <div class="tip">
-        <div class="tip-icon">🔍</div>
-        <p><strong>Zoom and pan</strong> across all five boroughs down to neighborhood level</p>
-      </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active">🗺 GEO MAP</button>
+      <button class="nav-tab">📊 BOROUGH STATS</button>
+      <button class="nav-tab">🌡 HEAT INDEX</button>
     </div>
-  </div>
 
-  <!-- MAP -->
-  <div class="map-section">
-    <div class="map-frame">
+    <div class="nav-right">
+      <span class="live-badge">LIVE</span>
+      <span>NYC Open Data</span>
+    </div>
+  </nav>
+
+  <!-- ── CONTENT ──────────────────────────────────────── -->
+  <div class="content">
+
+    <!-- MAP COLUMN -->
+    <div class="map-col">
+
+      <!-- Layer filter overlay -->
+      <div class="filter-panel">
+        <div class="filter-title">Layers</div>
+        <label class="filter-label">
+          <input type="checkbox" class="filter-cb" data-layer="density" checked>
+          Tree Density
+        </label>
+        <label class="filter-label">
+          <input type="checkbox" class="filter-cb" data-layer="income">
+          Income
+        </label>
+        <label class="filter-label">
+          <input type="checkbox" class="filter-cb" data-layer="underserved">
+          Underserved
+        </label>
+        <label class="filter-label">
+          <input type="checkbox" class="filter-cb" data-layer="heat">
+          Heat
+        </label>
+      </div>
+
       <iframe
+        id="map-frame"
         src="nyc_trees_map.html"
         title="NYC Green Space Inequity — Interactive Map"
-        width="100%"
-        height="600px"
-        style="border:none; border-radius:8px;"
-        loading="lazy"
         allowfullscreen
       ></iframe>
     </div>
-  </div>
 
-  <!-- KEY FINDINGS -->
-  <div class="findings">
-    <div class="section-label">Key findings</div>
-    <div class="findings-grid">
-      <div class="finding">
-        <div class="finding-tag">Inequality</div>
-        <p>Hunts Point in the Bronx has <span class="alert">8× fewer trees per square mile</span> than the Upper East Side, despite both being in the same city.</p>
+    <!-- RIGHT PANEL -->
+    <div class="panel-col">
+      <div class="panel-header">
+        <div class="panel-eyebrow">Select neighborhood to analyse</div>
+        <div class="metric-tabs">
+          <button class="mtab active" data-tab="trees">TREES</button>
+          <button class="mtab" data-tab="income">INCOME</button>
+          <button class="mtab" data-tab="equity">EQUITY</button>
+          <button class="mtab" data-tab="heat">HEAT</button>
+        </div>
       </div>
-      <div class="finding">
-        <div class="finding-tag">Income gap</div>
-        <p>Every single one of the <span class="highlight">10 most underserved neighborhoods</span> has a median household income under $35,000 per year.</p>
-      </div>
-      <div class="finding">
-        <div class="finding-tag">Progress, but uneven</div>
-        <p>NYC added trees between 2005 and 2015, but <span class="warn">the Bronx gained 42%</span> while Queens actually lost trees. Growth didn't go where it was needed most.</p>
-      </div>
-      <div class="finding">
-        <div class="finding-tag">Heat &amp; health</div>
-        <p>Neighborhoods with the fewest trees also score highest on urban heat vulnerability, bringing <span class="alert">hotter summers</span> on top of lower incomes and fewer resources.</p>
+
+      <div class="panel-body" id="panel-body">
+
+        <!-- Placeholder -->
+        <div class="placeholder" id="placeholder">
+          <div class="ph-dashes">- -</div>
+          <div class="ph-hint">Click any neighborhood on the map to load its data</div>
+        </div>
+
+        <!-- Loaded neighborhood -->
+        <div class="nta-data" id="nta-data">
+          <div class="nta-name"  id="nta-name"></div>
+          <div class="nta-meta">
+            <span class="nta-boro"  id="nta-boro"></span>
+            <span class="eq-badge"  id="eq-badge"></span>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="sb-label">Trees 2015</div>
+              <div class="sb-value" id="s-trees"></div>
+            </div>
+            <div class="stat-box">
+              <div class="sb-label">Density / km²</div>
+              <div class="sb-value" id="s-density"></div>
+            </div>
+            <div class="stat-box">
+              <div class="sb-label">Median Income</div>
+              <div class="sb-value" id="s-income"></div>
+            </div>
+            <div class="stat-box">
+              <div class="sb-label">Change vs 2005</div>
+              <div class="sb-value" id="s-change"></div>
+            </div>
+          </div>
+
+          <div class="score-section">
+            <div class="score-header">
+              <span class="score-title">Underserved Index</span>
+              <span class="score-num" id="score-num"></span>
+            </div>
+            <div class="score-track">
+              <div class="score-fill" id="score-fill"></div>
+            </div>
+            <div class="score-ends"><span>WELL-SERVED</span><span>CRITICAL</span></div>
+          </div>
+
+          <div class="panel-divider"></div>
+          <div class="nta-summary" id="nta-summary"></div>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-inner">
-      <div class="data-sources">
-        <span>Data:</span>
-        <a href="https://data.cityofnewyork.us/resource/uvpi-gqnh" target="_blank" rel="noopener">NYC Street Tree Census 2015</a>
-        <span>·</span>
-        <a href="https://data.cityofnewyork.us/resource/29bw-z7pj" target="_blank" rel="noopener">NYC Street Tree Census 2005</a>
-        <span>·</span>
-        <span>NYC Dept. of Parks &amp; Recreation</span>
+  <!-- ── TICKER ────────────────────────────────────────── -->
+  <div class="ticker">
+    <div class="ticker-tag">DATA</div>
+    <div class="ticker-track">
+      <!-- Items duplicated for seamless loop -->
+      <div class="ticker-inner">
+        <span class="ticker-item"><b>MOST UNDERSERVED</b> Hunts Point, Bronx &nbsp;·&nbsp; Score 0.89</span>
+        <span class="ticker-item"><b>HIGHEST DENSITY</b> Tottenville, Staten Island &nbsp;·&nbsp; 1,295 trees / km²</span>
+        <span class="ticker-item"><b>TOTAL TREES 2015</b> 666,134 across 195 neighborhoods</span>
+        <span class="ticker-item"><b>MOST UNDERSERVED</b> Hunts Point, Bronx &nbsp;·&nbsp; Score 0.89</span>
+        <span class="ticker-item"><b>HIGHEST DENSITY</b> Tottenville, Staten Island &nbsp;·&nbsp; 1,295 trees / km²</span>
+        <span class="ticker-item"><b>TOTAL TREES 2015</b> 666,134 across 195 neighborhoods</span>
       </div>
-      <div class="footer-credit">Built with Python &amp; Folium &nbsp;·&nbsp; Deployed via GitHub Pages</div>
     </div>
-  </footer>
+  </div>
 
+</div><!-- /.app -->
+
+<script>
+// ── EQUITY CONFIG ─────────────────────────────────────────────
+const EQ = {
+  'Well-Served':     { bg:'rgba(47,160,94,0.12)',  border:'#2fa05e', text:'#2fa05e'  },
+  'Adequate':        { bg:'rgba(168,230,191,0.12)',border:'#a8e6bf', text:'#a8e6bf' },
+  'Needs Attention': { bg:'rgba(245,184,0,0.12)',  border:'#f5b800', text:'#f5b800'  },
+  'Underserved':     { bg:'rgba(217,79,0,0.12)',   border:'#d94f00', text:'#d94f00'  },
+  'Critical':        { bg:'rgba(109,0,0,0.15)',    border:'#c0392b', text:'#c0392b'  },
+};
+
+// Map from score 0..1 → rgb string (green → amber → red)
+function scoreToColor(v) {
+  if (v <= 0.5) {
+    const t = v / 0.5;
+    return `rgb(${Math.round(47+t*198)},${Math.round(160+t*24)},${Math.round(94-t*94)})`;
+  }
+  const t = (v - 0.5) / 0.5;
+  return `rgb(${Math.round(245+t*(109-245))},${Math.round(184+t*(0-184))},0)`;
+}
+
+function summary(p) {
+  const name    = p.nta_name || 'This neighborhood';
+  const density = Math.round(parseFloat(p.density_2015)||0);
+  const income  = parseInt(p.median_income)||0;
+  const change  = parseInt(p.tree_change)||0;
+  const label   = p.equity_label||'Adequate';
+  const gained  = change >= 0;
+  const cStr    = gained
+    ? `gained ${change.toLocaleString()} trees`
+    : `lost ${Math.abs(change).toLocaleString()} trees`;
+
+  if (label === 'Critical')
+    return `${name} is among NYC's most underserved neighborhoods for green space. With only ${density} trees per km² and a median income of $${income.toLocaleString()}, it faces the sharpest need for street-tree investment.`;
+  if (label === 'Underserved')
+    return `${name} falls well below the city average for tree cover. At ${density} trees per km², it ${cStr} between 2005 and 2015 — but the gap with wealthier areas remains large.`;
+  if (label === 'Needs Attention')
+    return `${name} sits below the citywide average at ${density} trees per km². It ${cStr} since 2005. Targeted planting could meaningfully improve conditions here.`;
+  if (label === 'Adequate')
+    return `${name} has average tree coverage at ${density} trees per km² and ${cStr} between 2005 and 2015.`;
+  return `${name} is among NYC's greener neighborhoods at ${density} trees per km². It ${cStr} since 2005, reflecting consistent investment in street-tree canopy.`;
+}
+
+// ── PANEL UPDATE ──────────────────────────────────────────────
+function updatePanel(p) {
+  const label   = p.equity_label || 'Adequate';
+  const colors  = EQ[label] || EQ['Adequate'];
+  const trees   = parseInt(p.trees_2015)    || 0;
+  const density = (parseFloat(p.density_2015)||0).toFixed(1);
+  const income  = parseInt(p.median_income) || 0;
+  const change  = parseInt(p.tree_change)   || 0;
+  const score   = parseFloat(p.underserved) || 0;
+
+  document.getElementById('nta-name').textContent   = p.nta_name || '—';
+  document.getElementById('nta-boro').textContent   = (p.boro_name || p.borough || '').toUpperCase();
+
+  const badge   = document.getElementById('eq-badge');
+  badge.textContent    = label.toUpperCase();
+  badge.style.background   = colors.bg;
+  badge.style.border       = `1px solid ${colors.border}`;
+  badge.style.color        = colors.text;
+
+  document.getElementById('s-trees').textContent   = trees.toLocaleString();
+  document.getElementById('s-density').textContent = density;
+  document.getElementById('s-income').textContent  = '$' + income.toLocaleString();
+
+  const chEl = document.getElementById('s-change');
+  chEl.textContent = (change >= 0 ? '+' : '') + change.toLocaleString();
+  chEl.className   = 'sb-value' + (change < 0 ? ' neg' : '');
+
+  document.getElementById('score-num').textContent = score.toFixed(3);
+  const fill = document.getElementById('score-fill');
+  fill.style.width      = (Math.min(score, 1) * 100) + '%';
+  fill.style.background = scoreToColor(score);
+
+  document.getElementById('nta-summary').textContent = summary(p);
+
+  document.getElementById('placeholder').style.display = 'none';
+  const data = document.getElementById('nta-data');
+  data.classList.remove('visible');
+  // Trigger reflow so the animation re-fires on each click
+  void data.offsetWidth;
+  data.classList.add('visible');
+}
+
+// ── postMessage LISTENER ──────────────────────────────────────
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'nta_click') updatePanel(e.data.props);
+});
+
+// ── IFRAME INJECTION ──────────────────────────────────────────
+const mapFrame = document.getElementById('map-frame');
+
+function injectIntoIframe() {
+  try {
+    const iDoc = mapFrame.contentDocument;
+    const iWin = mapFrame.contentWindow;
+    if (!iDoc || !iWin || !iWin.L) { setTimeout(injectIntoIframe, 400); return; }
+    if (iWin.__dbInjected) return;
+    iWin.__dbInjected = true;
+
+    const s = iDoc.createElement('script');
+    s.textContent = `(function(){
+      // Find the Leaflet map instance
+      var map = null;
+      for (var k in window) {
+        try { var v=window[k]; if(v&&typeof v==='object'&&v.getZoom&&v.eachLayer){map=v;break;} }
+        catch(e){}
+      }
+      if (!map) return;
+
+      // Build a name → layer lookup from the layer control
+      window.__layerMap = {};
+      for (var k in window) {
+        try {
+          var v = window[k];
+          if (v && v._layers && Array.isArray(v._layers)) {
+            v._layers.forEach(function(item) {
+              if (item.overlay && item.name) window.__layerMap[item.name] = item.layer;
+            });
+          }
+        } catch(e){}
+      }
+
+      // Recursively attach click handlers to all GeoJSON sub-features
+      function attach(layer) {
+        if (!layer) return;
+        if (layer.eachLayer) {
+          layer.eachLayer(function(sub) {
+            if (sub.feature && sub.feature.properties) {
+              sub.on('click', function(e) {
+                window.parent.postMessage({ type:'nta_click', props:e.target.feature.properties }, '*');
+              });
+            }
+            attach(sub);
+          });
+        }
+      }
+      map.eachLayer(attach);
+
+      // Expose toggle function for parent-page filter checkboxes
+      window.__toggleLayer = function(name, show) {
+        var layer = window.__layerMap[name];
+        if (!layer) return;
+        if (show) layer.addTo(map); else map.removeLayer(layer);
+      };
+    })();`;
+    iDoc.head.appendChild(s);
+  } catch(e) {
+    console.warn('iframe injection:', e);
+  }
+}
+
+mapFrame.addEventListener('load', function() { setTimeout(injectIntoIframe, 900); });
+
+// ── FILTER CHECKBOXES ─────────────────────────────────────────
+const LAYER_NAMES = {
+  density:     '🌳 Tree Density (2015)',
+  income:      '💵 Median Household Income',
+  underserved: '🔴 Underserved Index',
+  heat:        '🌡 Urban Heat Vulnerability',
+};
+
+document.querySelectorAll('.filter-cb').forEach(function(cb) {
+  cb.addEventListener('change', function() {
+    const name = LAYER_NAMES[this.dataset.layer];
+    if (!name) return;
+    try { mapFrame.contentWindow.__toggleLayer && mapFrame.contentWindow.__toggleLayer(name, this.checked); }
+    catch(e){}
+  });
+});
+
+// ── TAB INTERACTIONS ──────────────────────────────────────────
+document.querySelectorAll('.mtab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.nav-tab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
 </body>
 </html>
