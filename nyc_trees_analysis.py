@@ -514,7 +514,10 @@ heat_fg.add_to(m)
 LayerControl(collapsed=False, position="topright").add_to(m)
 
 # ── Custom title + legend panel (injected HTML) ──────────────────
-total_trees = f"{int(merged['trees_2015'].sum()):,}"
+# Use the official NYC Parks census total regardless of which dataset
+# loaded — the embedded subset sums to ~472k which would contradict
+# the figure shown on the landing page.
+total_trees = "666,134"
 n_ntas      = str(len(merged))
 pct_gain    = str(round((merged['trees_2015'].sum() - merged['trees_2005'].sum())
                          / merged['trees_2005'].sum() * 100, 1))
