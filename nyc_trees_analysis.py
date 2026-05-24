@@ -314,36 +314,53 @@ if not live_ok:
 # ════════════════════════════════════════════════════════════════
 # 2b. AIR QUALITY (PM2.5)
 #     Fetched independently — failure here never blocks the map.
-#     NaN is kept for unmatched NTAs; median fill is used only
-#     inside the underserved normalisation in Section 3.
+#     Unmatched NTAs receive their borough average.
+#     pm25_estimated=True flags borough-average rows for the frontend.
 # ════════════════════════════════════════════════════════════════
 
-merged["pm25"] = np.nan   # default; overwritten below if fetch succeeds
+merged["pm25"]           = np.nan
+merged["pm25_estimated"] = False
 
 if LIVE_DATA:
     try:
         import requests, re
         print("\n📡 Fetching air quality (PM2.5) from NYC Open Data…")
-        # PM2.5 NTA-level data is not in this dataset; finest available is UHF42
-        # (42 United Hospital Fund health districts). We match NTA names to UHF42
-        # areas by token overlap then assign the UHF42-level PM2.5 value.
         r = _fetch(
             "https://data.cityofnewyork.us/resource/c3uy-2p5r.json",
             params={
                 "$where": ("name='Fine particles (PM 2.5)' AND geo_type_name='UHF42'"
                            " AND time_period LIKE 'Annual%'"),
-                "$limit": "500",
+                "$limit": "1000",
             },
         )
-        aq = pd.DataFrame(r.json())
-        aq["data_value"] = pd.to_numeric(aq["data_value"], errors="coerce")
-        aq = aq.dropna(subset=["data_value", "geo_place_name"])
+        raw = r.json()
+        print(f"   Records returned from API : {len(raw)}")
+        aq_all = pd.DataFrame(raw)
+        print(f"   Field names               : {list(aq_all.columns)}")
+        print(f"   Sample of 5 raw records:")
+        print(aq_all.head(5).to_string())
 
-        # Most recent annual average year
-        aq["_yr"] = pd.to_datetime(aq["start_date"], errors="coerce").dt.year
-        latest_yr = int(aq["_yr"].max())
-        aq = aq[aq["_yr"] == latest_yr].copy()
-        print(f"   ✓ {len(aq)} UHF42 PM2.5 annual readings · year {latest_yr}")
+        aq_all["data_value"] = pd.to_numeric(aq_all["data_value"], errors="coerce")
+        aq_all = aq_all.dropna(subset=["data_value", "geo_place_name"])
+        aq_all["_yr"] = pd.to_datetime(aq_all["start_date"], errors="coerce").dt.year
+
+        # Prefer 2015 to align with tree census; fall back to latest available
+        available_yrs = sorted(aq_all["_yr"].dropna().unique().tolist())
+        target_yr = 2015 if 2015 in available_yrs else int(aq_all["_yr"].max())
+        aq = aq_all[aq_all["_yr"] == target_yr].copy()
+        print(f"\n   Years available: {available_yrs}")
+        print(f"   Using year     : {target_yr}  ({len(aq)} UHF42 records)")
+
+        print(f"\n   PM2.5 stats ({target_yr}):")
+        print(f"     Field with value       : data_value")
+        print(f"     Field with area name   : geo_place_name")
+        print(f"     Min  : {aq['data_value'].min():.2f} μg/m³")
+        print(f"     Max  : {aq['data_value'].max():.2f} μg/m³")
+        print(f"     Mean : {aq['data_value'].mean():.2f} μg/m³")
+        print(f"\n   5 highest PM2.5 UHF42 areas:")
+        print(aq.nlargest(5, "data_value")[["geo_place_name", "data_value"]].to_string())
+        print(f"\n   5 lowest PM2.5 UHF42 areas:")
+        print(aq.nsmallest(5, "data_value")[["geo_place_name", "data_value"]].to_string())
 
         # Build lowercase name → value lookup
         uhf_map = {row["geo_place_name"].lower().strip(): float(row["data_value"])
@@ -365,9 +382,38 @@ if LIVE_DATA:
                         best_score, best_val = score, val
             return best_val if best_score >= 0.30 else None
 
-        merged["pm25"] = merged["nta_name"].apply(_match_uhf).round(2)
-        matched = merged["pm25"].notna().sum()
-        print(f"   ✓ PM2.5 matched to {matched} / {len(merged)} NTAs (UHF42 granularity)")
+        merged["pm25"] = merged["nta_name"].apply(_match_uhf)
+        direct_matched = merged["pm25"].notna().sum()
+        print(f"\n   PM2.5 directly matched to {direct_matched} / {len(merged)} NTAs")
+
+        # Fill unmatched NTAs with their borough average
+        boro_avg = (merged.dropna(subset=["pm25"])
+                    .groupby("boro_name")["pm25"].mean().round(2))
+        city_avg = float(merged["pm25"].dropna().mean())
+
+        def _fill_boro(row):
+            if pd.notna(row["pm25"]):
+                return row["pm25"], False
+            avg = boro_avg.get(row["boro_name"], city_avg)
+            return avg, True
+
+        filled = merged.apply(_fill_boro, axis=1, result_type="expand")
+        merged["pm25"]           = filled[0].round(2)
+        merged["pm25_estimated"] = filled[1]
+
+        real_count  = (~merged["pm25_estimated"]).sum()
+        est_count   = merged["pm25_estimated"].sum()
+        zero_count  = (merged["pm25"].fillna(0) == 0).sum()
+        print(f"   NTAs with pm25 = 0 or null: {zero_count}")
+        print(f"\n   5 highest PM2.5 NTAs:")
+        print(merged.nlargest(5, "pm25")[["nta_name","boro_name","pm25"]].to_string())
+        print(f"\n   5 lowest PM2.5 NTAs:")
+        print(merged.nsmallest(5, "pm25")[["nta_name","boro_name","pm25"]].to_string())
+
+        if real_count < 30:
+            print(f"\n⚠  WARNING: Only {real_count} NTAs have real PM2.5 data")
+        print(f"\n   AIR QUALITY COVERAGE: {real_count} of {len(merged)} NTAs have "
+              f"real PM2.5 data, {est_count} using borough averages")
 
     except Exception as exc:
         import traceback

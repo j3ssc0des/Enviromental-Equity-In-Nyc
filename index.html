@@ -258,6 +258,7 @@
     /* Heat panel */
     .heat-hero-num { font-family: var(--mono); font-size: 2rem; font-weight: 700; color: var(--orange); line-height: 1; margin-bottom: 3px; }
     .heat-explain { font-size: 0.8rem; line-height: 1.6; color: var(--muted); margin-bottom: 12px; }
+    .air-source { font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.04em; color: var(--muted); margin-top: 12px; line-height: 1.6; }
     .boro-compare { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 9px 11px; }
     .boro-compare-label { font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
     .boro-compare-val { font-family: var(--mono); font-size: 0.82rem; color: var(--text); }
@@ -486,6 +487,7 @@
             <button class="mtab active" data-tab="trees">TREES</button>
             <button class="mtab" data-tab="income">INCOME</button>
             <button class="mtab" data-tab="heat">HEAT</button>
+            <button class="mtab" data-tab="air">AIR</button>
             <button class="mtab" data-tab="equity">EQUITY</button>
           </div>
         </div>
@@ -573,6 +575,58 @@
               </div>
               <div class="panel-divider"></div>
               <div class="nta-summary" id="tp-income-note"></div>
+            </div>
+
+            <!-- AIR QUALITY TAB PANEL -->
+            <div class="tab-panel" id="tp-air">
+              <div class="hero-stat">
+                <div class="hero-num" id="tp-air-val" style="color:var(--green)"></div>
+                <div class="hero-label">PM2.5 Fine Particles (μg/m³)</div>
+              </div>
+              <div id="tp-air-badge" class="avg-compare" style="margin-bottom:8px"></div>
+              <div class="nta-summary" id="tp-air-estimated" style="display:none;margin-bottom:10px"></div>
+              <div class="sec-stats">
+                <div class="sec-box">
+                  <div class="sec-label">PM2.5 Level</div>
+                  <div class="sec-val neutral" id="tp-air-level"></div>
+                </div>
+                <div class="sec-box">
+                  <div class="sec-label">NYC Average</div>
+                  <div class="sec-val neutral">8.5 μg/m³</div>
+                </div>
+                <div class="sec-box">
+                  <div class="sec-label">VS Safe Limit</div>
+                  <div class="sec-val" id="tp-air-vs-safe"></div>
+                </div>
+              </div>
+              <div class="cmp-section">
+                <div class="cmp-label-row">
+                  <span class="cmp-label">PM2.5 vs safe threshold (8.0 μg/m³)</span>
+                </div>
+                <div class="cmp-track" style="height:10px;overflow:hidden">
+                  <div class="cmp-fill" id="tp-air-fill"></div>
+                  <div class="cmp-marker" id="tp-air-safe-marker">
+                    <div class="cmp-marker-label">Safe 8.0</div>
+                  </div>
+                </div>
+                <div class="cmp-ends"><span>0</span><span id="tp-air-max"></span></div>
+                <div class="cmp-note" id="tp-air-note"></div>
+              </div>
+              <div class="cmp-section">
+                <div class="cmp-label" style="margin-bottom:6px">Tree Cover Impact</div>
+                <div class="sec-stats">
+                  <div class="sec-box">
+                    <div class="sec-label">Tree Density</div>
+                    <div class="sec-val neutral" id="tp-air-tree-dens"></div>
+                  </div>
+                  <div class="sec-box">
+                    <div class="sec-label">PM2.5 Level</div>
+                    <div class="sec-val neutral" id="tp-air-tree-pm25"></div>
+                  </div>
+                </div>
+                <div class="nta-summary" id="tp-air-insight" style="margin-top:8px"></div>
+              </div>
+              <div class="air-source">PM2.5 data: NYC DOHMH Environment &amp; Health Data Portal · 2015 annual averages</div>
             </div>
 
             <!-- EQUITY TAB PANEL -->
@@ -780,6 +834,8 @@ function makeSummary(p) {
 /* ── NYC-WIDE CONSTANTS ────────────────────────────────────── */
 const NYC_AVG_DENSITY = 874;   // trees/km² citywide average
 const NYC_AVG_INCOME  = 63000; // median household income
+const NYC_AVG_PM25    = 8.49;  // μg/m³ 2015 annual mean (DOHMH UHF42)
+const PM25_SAFE       = 8.0;   // μg/m³ healthy threshold
 
 /* ── GEO MAP PANEL UPDATE ──────────────────────────────────── */
 function updatePanel(p) {
@@ -893,18 +949,96 @@ function updatePanel(p) {
     document.getElementById('tp-boro-heat').textContent = 'Click neighborhoods to compare';
   }
 
-  // ── PM2.5 AIR QUALITY ────────────────────────────────────────
-  const pm25Val = parseFloat(p.pm25);
-  const pm25El  = document.getElementById('tp-pm25-val');
+  // ── PM2.5 in HEAT tab (compact row) ─────────────────────────
+  const pm25Val  = parseFloat(p.pm25) || 0;
+  const pm25El   = document.getElementById('tp-pm25-val');
   if (pm25El) {
-    if (!isNaN(pm25Val) && pm25Val > 0) {
-      const pm25Color = pm25Val < 8.0 ? '#2fa05e' : pm25Val < 10.0 ? '#f5b800' : '#c0392b';
-      const pm25Dot   = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${pm25Color};margin-right:5px;flex-shrink:0"></span>`;
-      pm25El.innerHTML = `${pm25Dot}<span style="color:${pm25Color};font-family:var(--mono)">${pm25Val.toFixed(1)} μg/m³</span>`;
-    } else {
-      pm25El.textContent = 'N/A';
-    }
+    const pm25Color = pm25Val < 8.0 ? '#2fa05e' : pm25Val < 10.0 ? '#f5b800' : '#c0392b';
+    pm25El.innerHTML = `<span style="color:${pm25Color};font-family:var(--mono)">${pm25Val > 0 ? pm25Val.toFixed(1)+' μg/m³' : 'N/A'}</span>`;
   }
+
+  // ── AIR QUALITY TAB ──────────────────────────────────────────
+  (function() {
+    const pm25      = parseFloat(p.pm25) || 0;
+    const estimated = !!p.pm25_estimated;
+
+    // Status label + color
+    const airLabel = pm25 < 8.0 ? '🟢 CLEAN' : pm25 < 10.0 ? '🟡 MODERATE' : pm25 < 12.0 ? '🟠 POOR' : '🔴 HAZARDOUS';
+    const airBg    = pm25 < 8.0 ? 'rgba(47,160,94,0.12)'  : pm25 < 10.0 ? 'rgba(245,184,0,0.12)'  : 'rgba(217,79,0,0.12)';
+    const airBor   = pm25 < 8.0 ? 'rgba(47,160,94,0.35)'  : pm25 < 10.0 ? 'rgba(245,184,0,0.35)'  : 'rgba(217,79,0,0.4)';
+    const airTxt   = pm25 < 8.0 ? '#2fa05e'                : pm25 < 10.0 ? '#f5b800'                : '#d94f00';
+
+    const airValEl = document.getElementById('tp-air-val');
+    if (airValEl) { airValEl.textContent = pm25 > 0 ? pm25.toFixed(1) : '—'; airValEl.style.color = airTxt; }
+
+    const airBadge = document.getElementById('tp-air-badge');
+    if (airBadge) {
+      airBadge.textContent = airLabel;
+      airBadge.style.cssText = `background:${airBg};border:1px solid ${airBor};color:${airTxt};font-family:var(--mono);font-size:0.65rem;letter-spacing:0.06em;border-radius:4px;padding:4px 10px;display:inline-block`;
+    }
+
+    // Estimated note
+    const estEl = document.getElementById('tp-air-estimated');
+    if (estEl) {
+      if (estimated) {
+        estEl.textContent = `Using ${boro} borough average (estimated)`;
+        estEl.style.display = '';
+      } else {
+        estEl.style.display = 'none';
+      }
+    }
+
+    // Stat cards
+    const levelEl = document.getElementById('tp-air-level');
+    if (levelEl) levelEl.textContent = pm25 > 0 ? pm25.toFixed(1)+' μg/m³' : '—';
+
+    const vsSafeEl = document.getElementById('tp-air-vs-safe');
+    if (vsSafeEl) {
+      const diff = pm25 - PM25_SAFE;
+      const pct  = Math.round(Math.abs(diff) / PM25_SAFE * 100);
+      vsSafeEl.textContent  = diff >= 0 ? `+${pct}% above` : `${pct}% below`;
+      vsSafeEl.className    = 'sec-val ' + (diff >= 0 ? 'neg' : 'pos');
+    }
+
+    // PM2.5 bar (scale to max of pm25*1.4, safe*2, or 14)
+    const barMax  = Math.max(pm25 * 1.4, PM25_SAFE * 2, 14);
+    const fillPct = Math.min((pm25 / barMax) * 100, 100);
+    const safePct = Math.min((PM25_SAFE / barMax) * 100, 100);
+    const fillColor = pm25 <= PM25_SAFE ? 'var(--green)' : pm25 < 10 ? 'var(--amber)' : 'var(--orange)';
+    const fillEl = document.getElementById('tp-air-fill');
+    if (fillEl) fillEl.style.cssText = `width:${fillPct}%;background:${fillColor}`;
+    const safeMarker = document.getElementById('tp-air-safe-marker');
+    if (safeMarker) safeMarker.style.left = safePct + '%';
+    const maxEl = document.getElementById('tp-air-max');
+    if (maxEl) maxEl.textContent = barMax.toFixed(0);
+    const noteEl = document.getElementById('tp-air-note');
+    if (noteEl) {
+      const absDiff = Math.abs(pm25 - PM25_SAFE).toFixed(1);
+      noteEl.textContent  = pm25 <= PM25_SAFE ? `${absDiff} μg/m³ below safe limit` : `${absDiff} μg/m³ above safe limit`;
+      noteEl.className    = 'cmp-note ' + (pm25 <= PM25_SAFE ? 'pos' : 'neg');
+    }
+
+    // Tree density mini-cards
+    const densMini = document.getElementById('tp-air-tree-dens');
+    if (densMini) densMini.textContent = Math.round(dens).toLocaleString()+' /km²';
+    const pm25Mini = document.getElementById('tp-air-tree-pm25');
+    if (pm25Mini) pm25Mini.textContent = pm25 > 0 ? pm25.toFixed(1)+' μg/m³' : '—';
+
+    // Insight text
+    const insightEl = document.getElementById('tp-air-insight');
+    if (insightEl) {
+      const lowTrees  = dens < NYC_AVG_DENSITY;
+      const highPm25  = pm25 > NYC_AVG_PM25;
+      if (lowTrees && highPm25)
+        insightEl.textContent = 'This neighborhood has below average tree cover and above average pollution. Urban trees can reduce PM2.5 by up to 24%. This area would benefit most from targeted tree planting.';
+      else if (!lowTrees && !highPm25)
+        insightEl.textContent = 'Strong tree canopy here likely contributes to cleaner air. Trees act as natural filters for fine particle pollution.';
+      else if (!lowTrees && highPm25)
+        insightEl.textContent = 'Despite decent tree cover, pollution here is elevated, likely from nearby highways or industrial activity.';
+      else
+        insightEl.textContent = 'Relatively clean air despite limited trees, possibly due to distance from major traffic sources.';
+    }
+  })();
 
   // Show the loaded state
   document.getElementById('placeholder').style.display = 'none';
