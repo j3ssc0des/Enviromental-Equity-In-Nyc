@@ -370,50 +370,7 @@
     .footer-credit { font-size: 0.75rem; color: var(--muted); }
     .footer-note { font-family: var(--mono); font-size: 0.62rem; color: var(--muted); letter-spacing: 0.04em; padding-top: 0.25rem; border-top: 1px solid var(--border); }
 
-    /* ── SEARCH BARS ────────────────────────────────────────── */
-    .search-row { position: relative; margin-bottom: 5px; }
-    .search-input {
-      width: 100%; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 4px; padding: 6px 26px 6px 10px; color: var(--text);
-      font-family: var(--sans); font-size: 0.8rem; outline: none;
-      transition: border-color 0.15s;
-    }
-    .search-input::placeholder { color: var(--muted); }
-    .search-input:focus { border-color: rgba(47,160,94,0.5); }
-    .search-input.filled { border-color: rgba(47,160,94,0.45); }
-    .search-clear {
-      position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
-      background: transparent; border: none; color: var(--muted); cursor: pointer;
-      font-size: 0.7rem; padding: 0; line-height: 1; display: none;
-    }
-    .search-clear:hover { color: var(--text); }
-    .search-dropdown {
-      position: absolute; top: calc(100% + 2px); left: 0; right: 0; z-index: 500;
-      background: #0e1318; border: 1px solid rgba(47,160,94,0.3);
-      border-radius: 4px; max-height: 180px; overflow-y: auto;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.5); display: none;
-    }
-    .search-dropdown.open { display: block; }
-    .sdd-item {
-      padding: 6px 10px; font-size: 0.78rem; cursor: pointer; color: var(--text);
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .sdd-item:last-child { border-bottom: none; }
-    .sdd-item:hover { background: rgba(47,160,94,0.1); color: #fff; }
-    .sdd-boro { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); flex-shrink: 0; }
-    .benchmark-toggle {
-      width: 100%; margin-top: 2px; padding: 6px 10px;
-      background: transparent; border: 1px solid rgba(212,175,55,0.25);
-      border-radius: 4px; color: var(--muted); font-family: var(--mono);
-      font-size: 0.56rem; letter-spacing: 0.06em; cursor: pointer;
-      transition: all 0.15s; text-align: left;
-    }
-    .benchmark-toggle:hover { border-color: rgba(212,175,55,0.55); color: #d4af37; background: rgba(212,175,55,0.05); }
-    .benchmark-toggle.active { border-color: #d4af37; color: #d4af37; background: rgba(212,175,55,0.08); }
-
     /* ── COMPARISON TABLE ────────────────────────────────── */
-    .compare-panel { animation: fadein 0.28s ease; }
     .ct-grid-hdr { display: grid; grid-template-columns: 38% 31% 31%; gap: 3px; margin-bottom: 6px; }
     .ct-grid-row { display: grid; grid-template-columns: 38% 31% 31%; gap: 3px; margin-bottom: 3px; align-items: center; }
     .ct-metric-lbl { font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 2px 0; line-height: 1.3; }
@@ -437,19 +394,6 @@
     .ct-score b { color: var(--green); }
     .ct-gap { background: rgba(47,160,94,0.05); border: 1px solid rgba(47,160,94,0.12); border-left: 2px solid var(--green); border-radius: 0 4px 4px 0; padding: 9px 11px; font-size: 0.76rem; line-height: 1.62; color: var(--muted); margin: 6px 0 8px; }
     .ct-gap b { color: var(--green); }
-    .ct-actions { display: flex; gap: 6px; }
-    .zoom-btn { display: inline-flex; align-items: center; gap: 4px; background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.06em; padding: 5px 8px; border-radius: 3px; cursor: pointer; transition: all 0.15s; flex: 1; justify-content: center; }
-    .zoom-btn:hover { color: var(--green); border-color: rgba(47,160,94,0.4); }
-    .ct-reset-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--muted); font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.06em; padding: 5px 8px; border-radius: 3px; cursor: pointer; transition: all 0.15s; }
-    .ct-reset-btn:hover { color: var(--orange); border-color: rgba(217,79,0,0.4); }
-
-    /* ── COMPARE SECTION ────────────────────────────────────── */
-    .compare-section { border-top: 1px solid var(--border); padding-top: 11px; margin-top: 11px; }
-    .compare-section-label {
-      font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
-    }
-
     /* ── RESPONSIVE ────────────────────────────────────────── */
     @media (max-width: 900px) {
       .charts-grid { grid-template-columns: 1fr; }
@@ -485,6 +429,18 @@
       <span>NYC Open Data</span>
     </div>
   </nav>
+
+  <!-- HERO ──────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="eyebrow">NYC Street Tree Census &nbsp;·&nbsp; 2005 &amp; 2015</div>
+    <h1>Does your neighborhood<br>get its fair share of <em>trees</em>?</h1>
+    <p>
+      NYC counts every street tree every decade. The numbers reveal a pattern:
+      lower-income neighborhoods consistently have fewer trees. That gap
+      means hotter streets, worse air, and compounding disadvantage.
+      Explore the interactive map below to see how your neighborhood stacks up.
+    </p>
+  </section>
 
   <!-- STATS BAR ─────────────────────────────────────────────── -->
   <div class="stats-bar">
@@ -529,8 +485,8 @@
           <div class="metric-tabs">
             <button class="mtab active" data-tab="trees">TREES</button>
             <button class="mtab" data-tab="income">INCOME</button>
-            <button class="mtab" data-tab="equity">EQUITY</button>
             <button class="mtab" data-tab="heat">HEAT</button>
+            <button class="mtab" data-tab="equity">EQUITY</button>
           </div>
         </div>
         <div class="panel-body" id="panel-body">
@@ -625,6 +581,7 @@
                 <div class="hero-num" id="tp-score-big"></div>
                 <div class="hero-label">Underserved index (0 = well-served, 1 = critical)</div>
               </div>
+              <div id="tp-equity-bench"></div>
             </div>
 
             <!-- HEAT TAB PANEL -->
@@ -647,22 +604,6 @@
 
           </div><!-- /.nta-data -->
 
-          <!-- COMPARE NEIGHBORHOODS section (always visible at bottom) -->
-          <div class="compare-section">
-            <div class="compare-section-label">Compare Neighborhoods</div>
-            <div class="search-row">
-              <input type="text" class="search-input" id="search-a" placeholder="🔍 Neighborhood A…" autocomplete="off">
-              <button class="search-clear" id="search-a-clear">✕</button>
-              <div class="search-dropdown" id="search-a-dd"></div>
-            </div>
-            <div class="search-row">
-              <input type="text" class="search-input" id="search-b" placeholder="🔍 Neighborhood B to compare…" autocomplete="off">
-              <button class="search-clear" id="search-b-clear">✕</button>
-              <div class="search-dropdown" id="search-b-dd"></div>
-            </div>
-            <button class="benchmark-toggle" id="benchmark-toggle">🏆 Compare vs NYC Healthy Benchmark</button>
-            <div class="compare-panel" id="compare-panel" style="display:none;margin-top:8px"></div>
-          </div>
 
         </div>
       </div>
@@ -776,12 +717,8 @@
 <script>
 /* ── SHARED STATE ──────────────────────────────────────────── */
 let ntaData      = [];
-let dataLoaded   = false;
 let boroughBuilt = false;
 let heatBuilt    = false;
-let searchAProps = null;
-let searchBProps = null;
-let useBenchmark = false;
 
 /* ── HEALTHY BENCHMARK TARGETS ─────────────────────────────── */
 const BENCHMARK = {
@@ -975,6 +912,8 @@ function updatePanel(p) {
   dataEl.classList.remove('visible');
   void dataEl.offsetWidth;
   dataEl.classList.add('visible');
+
+  buildBenchmarkPanel(p);
 }
 
 /* ── METRIC TAB SWITCH (inside right panel) ────────────────── */
@@ -988,7 +927,10 @@ function switchMetricTab(tabKey) {
 
 window.addEventListener('message', function(e) {
   if (!e.data || e.data.type !== 'nta_click') return;
-  selectNeighborhoodA(e.data.props);
+  const props = e.data.props;
+  resetHighlights();
+  highlightNTA(props.nta_name, '#2fa05e');
+  updatePanel(props);
 });
 
 /* ── MAP HELPERS ───────────────────────────────────────────── */
@@ -1008,151 +950,9 @@ function zoomToNTA(ntaName) {
     frame.contentWindow.postMessage({type:'zoom_to_nta', nta_name:ntaName}, '*');
 }
 
-/* ── SEARCH LOGIC ──────────────────────────────────────────── */
+/* ── HTML ESCAPE ───────────────────────────────────────────── */
 function esc(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function bindSearch(inputId, ddId, clearId, onSelect) {
-  const inp  = document.getElementById(inputId);
-  const dd   = document.getElementById(ddId);
-  const clr  = document.getElementById(clearId);
-  let filtered = [];
-
-  inp.addEventListener('input', function() {
-    const q = this.value.trim().toLowerCase();
-    clr.style.display = q ? '' : 'none';
-    if (!q) { dd.classList.remove('open'); return; }
-    if (!dataLoaded) {
-      dd.innerHTML = '<div class="sdd-item" style="opacity:0.6;cursor:default;pointer-events:none">Loading neighborhood data…</div>';
-      dd.classList.add('open');
-      return;
-    }
-    filtered = ntaData.filter(d => d.nta_name && d.nta_name.toLowerCase().includes(q)).slice(0, 9);
-    if (!filtered.length) { dd.classList.remove('open'); return; }
-    dd.innerHTML = filtered.map((d, i) =>
-      `<div class="sdd-item" data-i="${i}">
-        <span>${esc(d.nta_name)}</span>
-        <span class="sdd-boro">${esc((d.boro_name||'').toUpperCase())}</span>
-      </div>`
-    ).join('');
-    dd.querySelectorAll('.sdd-item').forEach(function(el) {
-      el.addEventListener('mousedown', function(ev) {
-        ev.preventDefault();
-        const idx = parseInt(this.dataset.i);
-        onSelect(filtered[idx]);
-        dd.classList.remove('open');
-      });
-    });
-    dd.classList.add('open');
-  });
-
-  inp.addEventListener('blur',  () => setTimeout(() => dd.classList.remove('open'), 200));
-  inp.addEventListener('focus', function() { if (this.value.trim()) this.dispatchEvent(new Event('input')); });
-  clr.addEventListener('click', function() {
-    inp.value = '';
-    inp.classList.remove('filled');
-    clr.style.display = 'none';
-    dd.classList.remove('open');
-    onSelect(null);
-  });
-}
-
-function initSearch() {
-  bindSearch('search-a', 'search-a-dd', 'search-a-clear', function(props) {
-    if (!props) { clearA(); return; }
-    selectNeighborhoodA(props);
-  });
-  bindSearch('search-b', 'search-b-dd', 'search-b-clear', function(props) {
-    if (!props) { clearB(); return; }
-    selectNeighborhoodB(props);
-  });
-
-  document.getElementById('benchmark-toggle').addEventListener('click', toggleBenchmark);
-}
-
-function selectNeighborhoodA(props) {
-  searchAProps = props;
-  const inp = document.getElementById('search-a');
-  inp.value = props.nta_name || '';
-  inp.classList.add('filled');
-  document.getElementById('search-a-clear').style.display = '';
-  resetHighlights();
-  highlightNTA(props.nta_name, '#2fa05e');
-  if (searchBProps) highlightNTA(searchBProps.nta_name, '#a855f7');
-  if (useBenchmark || searchBProps) {
-    buildCompareTable(props, useBenchmark ? BENCHMARK : searchBProps);
-  } else {
-    showSingleView(props);
-  }
-}
-
-function selectNeighborhoodB(props) {
-  searchBProps = props;
-  useBenchmark = false;
-  document.getElementById('benchmark-toggle').classList.remove('active');
-  const inp = document.getElementById('search-b');
-  inp.value = props.nta_name || '';
-  inp.classList.add('filled');
-  document.getElementById('search-b-clear').style.display = '';
-  highlightNTA(props.nta_name, '#a855f7');
-  if (searchAProps) buildCompareTable(searchAProps, props);
-}
-
-function toggleBenchmark() {
-  useBenchmark = !useBenchmark;
-  const btn = document.getElementById('benchmark-toggle');
-  btn.classList.toggle('active', useBenchmark);
-  if (useBenchmark) {
-    // Clear search B
-    searchBProps = null;
-    const inp = document.getElementById('search-b');
-    inp.value = '';
-    inp.classList.remove('filled');
-    document.getElementById('search-b-clear').style.display = 'none';
-    document.getElementById('search-b-dd').classList.remove('open');
-    resetHighlights();
-    if (searchAProps) { highlightNTA(searchAProps.nta_name, '#2fa05e'); buildCompareTable(searchAProps, BENCHMARK); }
-  } else {
-    if (searchAProps) showSingleView(searchAProps);
-  }
-}
-
-function clearA() {
-  searchAProps = null;
-  const inp = document.getElementById('search-a');
-  inp.value = ''; inp.classList.remove('filled');
-  document.getElementById('search-a-clear').style.display = 'none';
-  resetHighlights();
-  if (searchBProps) highlightNTA(searchBProps.nta_name, '#a855f7');
-  document.getElementById('compare-panel').style.display = 'none';
-  document.getElementById('nta-data').classList.remove('visible');
-  document.getElementById('placeholder').style.display = 'flex';
-}
-
-function clearB() {
-  searchBProps = null;
-  resetHighlights();
-  if (searchAProps) { highlightNTA(searchAProps.nta_name, '#2fa05e'); showSingleView(searchAProps); }
-}
-
-function showSingleView(props) {
-  document.getElementById('compare-panel').style.display = 'none';
-  document.getElementById('placeholder').style.display   = 'none';
-  updatePanel(props);
-}
-
-function resetCompare() {
-  searchBProps = null;
-  useBenchmark = false;
-  document.getElementById('benchmark-toggle').classList.remove('active');
-  const inp = document.getElementById('search-b');
-  inp.value = ''; inp.classList.remove('filled');
-  document.getElementById('search-b-clear').style.display = 'none';
-  document.getElementById('compare-panel').style.display = 'none';
-  resetHighlights();
-  if (searchAProps) { highlightNTA(searchAProps.nta_name, '#2fa05e'); showSingleView(searchAProps); }
-  else document.getElementById('placeholder').style.display = 'flex';
 }
 
 /* ── BENCHMARK RATING ──────────────────────────────────────── */
@@ -1166,147 +966,72 @@ function benchRating(val, target, better) {
   return r <= 1.2 ? 'good' : r <= 1.6 ? 'warn' : 'bad';
 }
 
-/* ── COMPARISON TABLE ──────────────────────────────────────── */
-function buildCompareTable(pA, pBorBench) {
-  const isBench = !!pBorBench._isBenchmark;
-  document.getElementById('placeholder').style.display = 'none';
-  updatePanel(pA);
-
-  resetHighlights();
-  highlightNTA(pA.nta_name, '#2fa05e');
-  if (!isBench) highlightNTA(pBorBench.nta_name, '#a855f7');
-
-  const eqA = EQ[pA.equity_label] || EQ['Adequate'];
-
-  const colBClass = isBench ? 'bench-hdr' : 'b-hdr';
-  const colBHtml  = isBench
-    ? `<span class="ct-hdr-name" style="color:#d4af37">🏆 NYC Healthy Benchmark</span>
-       <span class="ct-hdr-badge" style="background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.4);color:#d4af37">TARGET</span>`
-    : (function() {
-        const eq = EQ[pBorBench.equity_label] || EQ['Adequate'];
-        return `<span class="ct-hdr-name">${esc(pBorBench.nta_name||'—')}</span>
-                <span class="ct-hdr-boro">${esc((pBorBench.boro_name||'').toUpperCase())}</span>
-                <span class="ct-hdr-badge" style="background:${eq.bg};border:1px solid ${eq.border};color:${eq.text}">${esc((pBorBench.equity_label||'').toUpperCase())}</span>`;
-      })();
-
+/* ── BENCHMARK PANEL (auto-updates in EQUITY tab on every map click) ── */
+function buildBenchmarkPanel(p) {
+  const bench = document.getElementById('tp-equity-bench');
+  if (!bench) return;
+  const eqA = EQ[p.equity_label] || EQ['Adequate'];
   const metrics = [
-    { label:'Tree Density',      bFmt:'≥ 1,000/km²',  bTarget:1000,  better:'higher',
-      aVal:parseFloat(pA.density_2015)||0,             bVal:parseFloat(pBorBench.density_2015)||0,
-      fmt: v => Math.round(v).toLocaleString()+'/km²' },
-    { label:'Median Income',     bFmt:'$63,000',       bTarget:63000, better:'higher',
-      aVal:parseInt(pA.median_income)||0,              bVal:parseInt(pBorBench.median_income)||0,
-      fmt: v => '$'+v.toLocaleString() },
-    { label:'Underserved Score', bFmt:'< 0.30',        bTarget:0.30,  better:'lower',
-      aVal:parseFloat(pA.underserved)||0,              bVal:parseFloat(pBorBench.underserved)||0,
-      fmt: v => v.toFixed(3) },
-    { label:'Heat Risk',         bFmt:'< 0.40',        bTarget:0.40,  better:'lower',
-      aVal:parseFloat(pA.heat_proxy)||0,               bVal:parseFloat(pBorBench.heat_proxy)||0,
-      fmt: v => v.toFixed(3) },
-    { label:'PM2.5',             bFmt:'< 8.0 μg/m³',  bTarget:8.0,   better:'lower',
-      aVal:parseFloat(pA.pm25)||0,                     bVal:parseFloat(pBorBench.pm25)||0,
-      fmt: v => v > 0 ? v.toFixed(1)+' μg/m³' : '—' },
-    { label:'Trees Gained',      bFmt:'positive',      bTarget:1,     better:'higher',
-      aVal:parseInt(pA.tree_change)||0,                bVal:parseInt(pBorBench.tree_change)||0,
-      fmt: v => (v > 0 ? '+' : '') + v.toLocaleString() },
+    { label:'Tree Density',      bFmt:'≥ 1,000/km²', bTarget:1000,  better:'higher',
+      aVal:parseFloat(p.density_2015)||0, fmt: v => Math.round(v).toLocaleString()+'/km²' },
+    { label:'Median Income',     bFmt:'$63,000',      bTarget:63000, better:'higher',
+      aVal:parseInt(p.median_income)||0,  fmt: v => '$'+v.toLocaleString() },
+    { label:'Underserved Score', bFmt:'< 0.30',       bTarget:0.30,  better:'lower',
+      aVal:parseFloat(p.underserved)||0,  fmt: v => v.toFixed(3) },
+    { label:'Heat Risk',         bFmt:'< 0.40',       bTarget:0.40,  better:'lower',
+      aVal:parseFloat(p.heat_proxy)||0,   fmt: v => v.toFixed(3) },
+    { label:'PM2.5',             bFmt:'< 8.0 μg/m³', bTarget:8.0,   better:'lower',
+      aVal:parseFloat(p.pm25)||0,         fmt: v => v > 0 ? v.toFixed(1)+' μg/m³' : '—' },
+    { label:'Trees Gained',      bFmt:'positive',     bTarget:1,     better:'higher',
+      aVal:parseInt(p.tree_change)||0,    fmt: v => (v > 0 ? '+' : '') + v.toLocaleString() },
   ];
 
-  let scoreA = 0, scoreB = 0, total = 0;
+  let scoreA = 0, total = 0;
   metrics.forEach(function(m) {
-    if (m.label === 'PM2.5' && m.aVal <= 0 && m.bVal <= 0) return;
+    if (m.label === 'PM2.5' && m.aVal <= 0) return;
     total++;
     if (benchRating(m.aVal, m.bTarget, m.better) === 'good') scoreA++;
-    if (!isBench && benchRating(m.bVal, m.bTarget, m.better) === 'good') scoreB++;
   });
 
-  function winOf(a, b, better) {
-    if (Math.abs(a - b) < 0.0001) return 'tie';
-    return better === 'higher' ? (a > b ? 'a' : 'b') : (a < b ? 'a' : 'b');
-  }
-
   const rowsHtml = metrics.map(function(m) {
-    if (m.label === 'PM2.5' && m.aVal <= 0 && m.bVal <= 0) return '';
-    const rA   = benchRating(m.aVal, m.bTarget, m.better);
-    const aWin = !isBench && winOf(m.aVal, m.bVal, m.better) === 'a';
-    const aCellHtml = `<div class="ct-cell ${rA}${aWin?' win':''}">${m.fmt(m.aVal)}${aWin?' ▶':''}</div>`;
-
-    let bCellHtml;
-    if (isBench) {
-      const metIcon = rA === 'good' ? ' ✓' : '';
-      bCellHtml = `<div class="ct-cell bench-tgt">${m.bFmt}${metIcon}</div>`;
-    } else {
-      const rB   = benchRating(m.bVal, m.bTarget, m.better);
-      const bWin = winOf(m.aVal, m.bVal, m.better) === 'b';
-      bCellHtml  = `<div class="ct-cell b-${rB}${bWin?' win':''}">${m.fmt(m.bVal)}${bWin?' ◀':''}</div>`;
-    }
-
+    if (m.label === 'PM2.5' && m.aVal <= 0) return '';
+    const rA = benchRating(m.aVal, m.bTarget, m.better);
     return `<div class="ct-grid-row">
       <div class="ct-metric-lbl">${m.label}</div>
-      ${aCellHtml}
-      ${bCellHtml}
+      <div class="ct-cell ${rA}">${m.fmt(m.aVal)}</div>
+      <div class="ct-cell bench-tgt">${m.bFmt}${rA === 'good' ? ' ✓' : ''}</div>
     </div>`;
   }).join('');
 
-  const scoreHtml = isBench
-    ? `<div class="ct-score"><span>Meets <b>${scoreA} of ${total}</b> healthy benchmarks</span></div>`
-    : `<div class="ct-score"><span>A: <b>${scoreA}/${total}</b> benchmarks</span><span>B: <b>${scoreB}/${total}</b> benchmarks</span></div>`;
+  const nameA = esc(p.nta_name || 'This neighborhood');
+  const densGap = Math.max(0, 1000 - (parseFloat(p.density_2015)||0));
+  const incA    = parseInt(p.median_income)||0;
+  const pm25A   = parseFloat(p.pm25)||0;
+  const parts   = [];
+  if (densGap > 150) parts.push(`missing ~${Math.round(densGap).toLocaleString()} trees/km² to reach a healthy canopy level`);
+  if (incA < 63000)  parts.push(`median income is ${Math.round(((63000-incA)/63000)*100)}% below the NYC median of $63,000`);
+  if (pm25A > 8.5)   parts.push(`PM2.5 is ${Math.round(((pm25A-8.0)/8.0)*100)}% above the clean air benchmark`);
+  const gapText = parts.length
+    ? `${nameA} is ${parts.length === 1 ? parts[0] : parts.slice(0,-1).join(', ')+', and '+parts[parts.length-1]}. It currently meets <b>${scoreA} of ${total}</b> healthy neighborhood benchmarks.`
+    : `${nameA} is well-served and meets <b>${scoreA} of ${total}</b> healthy neighborhood benchmarks.`;
 
-  const gapHtml = makeGapAnalysis(pA, pBorBench, isBench, scoreA, scoreB, total);
-  const shortName = esc((pA.nta_name||'').split(',')[0].split('-')[0].trim());
-
-  document.getElementById('compare-panel').innerHTML = `
+  bench.innerHTML = `
     <div class="ct-grid-hdr">
       <div></div>
       <div class="ct-hdr-cell a-hdr">
-        <span class="ct-hdr-name">${esc(pA.nta_name||'—')}</span>
-        <span class="ct-hdr-boro">${esc((pA.boro_name||'').toUpperCase())}</span>
-        <span class="ct-hdr-badge" style="background:${eqA.bg};border:1px solid ${eqA.border};color:${eqA.text}">${esc((pA.equity_label||'').toUpperCase())}</span>
+        <span class="ct-hdr-name">${esc(p.nta_name||'—')}</span>
+        <span class="ct-hdr-boro">${esc((p.boro_name||'').toUpperCase())}</span>
+        <span class="ct-hdr-badge" style="background:${eqA.bg};border:1px solid ${eqA.border};color:${eqA.text}">${esc((p.equity_label||'').toUpperCase())}</span>
       </div>
-      <div class="ct-hdr-cell ${colBClass}">${colBHtml}</div>
+      <div class="ct-hdr-cell bench-hdr">
+        <span class="ct-hdr-name" style="color:#d4af37">🏆 NYC Healthy Benchmark</span>
+        <span class="ct-hdr-badge" style="background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.4);color:#d4af37">TARGET</span>
+      </div>
     </div>
     ${rowsHtml}
-    ${scoreHtml}
-    <div class="ct-gap">${gapHtml}</div>
-    <div class="ct-actions">
-      <button class="zoom-btn" id="ct-zoom-btn">⊕ Zoom to ${shortName}</button>
-      <button class="ct-reset-btn" onclick="resetCompare()">✕ Reset</button>
-    </div>
+    <div class="ct-score"><span>Meets <b>${scoreA} of ${total}</b> healthy benchmarks</span></div>
+    <div class="ct-gap">${gapText}</div>
   `;
-  document.getElementById('compare-panel').style.display = 'block';
-  document.getElementById('ct-zoom-btn').addEventListener('click', function() {
-    zoomToNTA(pA.nta_name);
-  });
-}
-
-function makeGapAnalysis(pA, pBorBench, isBench, scoreA, scoreB, total) {
-  const nameA = esc(pA.nta_name || 'This neighborhood');
-  if (!isBench) {
-    const nameB = esc(pBorBench.nta_name || 'Neighborhood B');
-    return `${nameA} meets <b>${scoreA} of ${total}</b> healthy benchmarks. ${nameB} meets <b>${scoreB} of ${total}</b> benchmarks.`;
-  }
-  const densA = parseFloat(pA.density_2015)||0;
-  const incA  = parseInt(pA.median_income)||0;
-  const pm25A = parseFloat(pA.pm25)||0;
-  const parts = [];
-
-  const densGap = Math.max(0, 1000 - densA);
-  if (densGap > 150) parts.push(`missing approximately ${Math.round(densGap).toLocaleString()} trees/km² to reach a healthy canopy level`);
-
-  if (incA < 63000) {
-    const pct = Math.round(((63000 - incA) / 63000) * 100);
-    parts.push(`median income is ${pct}% below the NYC median of $63,000`);
-  }
-
-  if (pm25A > 8.5) {
-    const pct = Math.round(((pm25A - 8.0) / 8.0) * 100);
-    parts.push(`PM2.5 is ${pct}% above the clean air benchmark`);
-  }
-
-  if (!parts.length)
-    return `${nameA} is well-served and meets <b>${scoreA} of ${total}</b> healthy neighborhood benchmarks.`;
-
-  const joined = parts.length === 1 ? parts[0]
-    : parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1];
-  return `${nameA} is ${joined}. It currently meets <b>${scoreA} of ${total}</b> healthy neighborhood benchmarks.`;
 }
 
 /* ── BOROUGH STATS ─────────────────────────────────────────── */
@@ -1562,7 +1287,6 @@ function extractNeighborhoodData() {
       }
       if (deduped.length > 0) {
         ntaData = deduped;
-        dataLoaded = true;
         buildBoroughStats();
         buildHeatIndex();
         return;
@@ -1576,7 +1300,6 @@ function extractNeighborhoodData() {
       const found = parseMatches(html.match(re));
       if (found.length > 0) {
         ntaData = found;
-        dataLoaded = true;
         buildBoroughStats();
         buildHeatIndex();
       }
