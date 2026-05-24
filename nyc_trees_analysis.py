@@ -601,7 +601,130 @@ heat_fg.add_to(m)
 # ── Layer control ────────────────────────────────────────────────
 LayerControl(collapsed=False, position="topright").add_to(m)
 
-# ── Custom legend panel (injected HTML) ──────────────────────────
+# ── Custom legend panel + universal tooltip (injected HTML) ─────
+_TOOLTIP_JS = """
+(function(){
+  var EQ={'Well-Served':'#2fa05e','Adequate':'#a8e6bf',
+          'Needs Attention':'#f5b800','Underserved':'#d94f00','Critical':'#6d0000'};
+
+  function buildTooltipHTML(p){
+    var name=window.__activeLayerName||'';
+    var html='<div style="font-family:DM Sans,sans-serif;min-width:155px">'
+      +'<b style="font-size:13px;color:#e8f0e8;display:block;margin-bottom:5px">'
+      +(p.nta_name||'')+'</b>';
+    if(name.indexOf('Tree Density')>=0){
+      var dens=Math.round(parseFloat(p.density_2015)||0).toLocaleString();
+      html+='<div style="color:#b0cbb0;font-size:11px;margin-bottom:4px">🌳 '+dens+' trees/km²</div>'
+           +'<span style="background:'+(EQ[p.equity_label]||'#888')
+           +';color:#fff;padding:2px 8px;border-radius:3px;font-size:10px">'
+           +(p.equity_label||'')+'</span>';
+    }else if(name.indexOf('Income')>=0){
+      var inc=parseInt(p.median_income)||0;
+      var sc=inc>=63000?'#2fa05e':'#d94f00';
+      html+='<div style="color:#b0cbb0;font-size:11px;margin-bottom:4px">💵 $'
+           +inc.toLocaleString()+' median income</div>'
+           +'<span style="color:'+sc+';font-size:10px">'
+           +(inc>=63000?'↑ above NYC avg':'↓ below NYC avg')+'</span>';
+    }else if(name.indexOf('Underserved')>=0){
+      var score=(parseFloat(p.underserved)||0).toFixed(2);
+      html+='<div style="color:#b0cbb0;font-size:11px;margin-bottom:4px">🔴 Underserved Score: '+score+'</div>'
+           +'<span style="background:'+(EQ[p.equity_label]||'#888')
+           +';color:#fff;padding:2px 8px;border-radius:3px;font-size:10px">'
+           +(p.equity_label||'')+'</span>';
+    }else if(name.indexOf('Change')>=0){
+      var chg=parseInt(p.tree_change)||0;
+      var cc=chg>=0?'#2fa05e':'#d94f00';
+      html+='<div style="color:'+cc+';font-size:11px">'
+           +(chg>=0?'📈 +':'📉 ')
+           +Math.abs(chg).toLocaleString()+' trees since 2005</div>';
+    }else if(name.indexOf('Heat')>=0){
+      var heat=parseFloat(p.heat_proxy)||0;
+      var hl=heat>=0.75?'Critical':heat>=0.55?'High':heat>=0.35?'Moderate':'Low';
+      var hc=heat>=0.75?'#c0392b':heat>=0.55?'#d94f00':heat>=0.35?'#f5b800':'#2fa05e';
+      html+='<div style="color:#b0cbb0;font-size:11px;margin-bottom:4px">🌡 Heat Risk: '+heat.toFixed(3)+'</div>'
+           +'<span style="color:'+hc+';font-size:10px">'+hl+'</span>';
+    }else if(name.indexOf('Air')>=0||name.indexOf('PM')>=0){
+      var pm=parseFloat(p.pm25)||0;
+      if(pm>0){
+        var pml=pm<8?'Clean':pm<10?'Moderate':pm<12?'Poor':'Hazardous';
+        var pmc=pm<8?'#2fa05e':pm<10?'#f5b800':'#c0392b';
+        html+='<div style="color:#b0cbb0;font-size:11px;margin-bottom:4px">💨 PM2.5: '
+             +pm.toFixed(1)+' μg/m³</div>'
+             +'<span style="color:'+pmc+';font-size:10px">'+pml+'</span>';
+      }else{
+        html+='<div style="color:#b0cbb0;font-size:11px">💨 PM2.5: N/A</div>';
+      }
+    }else{
+      html+='<span style="background:'+(EQ[p.equity_label]||'#888')
+           +';color:#fff;padding:2px 8px;border-radius:3px;font-size:10px">'
+           +(p.equity_label||'')+'</span>';
+    }
+    return html+'</div>';
+  }
+
+  // Start with the default-visible layer name
+  window.__activeLayerName = '🌳 Tree Density (2015)';
+  var tip = document.getElementById('custom-tooltip');
+
+  // Attach mouseover / mousemove / mouseout / click to every GeoJSON feature
+  var _attached = {};
+  function attachEvents(layer){
+    if(!layer||!layer.eachLayer) return;
+    layer.eachLayer(function(sub){
+      if(sub.feature&&sub.feature.properties){
+        var lid = L.stamp(sub);
+        if(!_attached[lid]){
+          _attached[lid] = true;
+          sub.on('mouseover', function(e){
+            tip.innerHTML = buildTooltipHTML(e.target.feature.properties);
+            tip.style.display = 'block';
+          });
+          sub.on('mousemove', function(e){
+            tip.style.left = (e.originalEvent.clientX + 15) + 'px';
+            tip.style.top  = (e.originalEvent.clientY - 10) + 'px';
+          });
+          sub.on('mouseout', function(){
+            tip.style.display = 'none';
+          });
+          sub.on('click', function(e){
+            window.parent.postMessage(
+              {type:'nta_click', props:e.target.feature.properties}, '*');
+          });
+        }
+      }
+      attachEvents(sub);
+    });
+  }
+
+  // Update active layer name when parent dashboard switches layers
+  window.addEventListener('message', function(msg){
+    if(!msg||!msg.data) return;
+    if(msg.data.type==='toggle_layer'&&msg.data.show)
+      window.__activeLayerName = msg.data.name;
+  });
+
+  // Poll until Leaflet map is ready
+  var t = setInterval(function(){
+    for(var k in window){
+      try{
+        var v = window[k];
+        if(v&&typeof v==='object'&&v.getZoom&&v.eachLayer){
+          clearInterval(t);
+          // Attach to all layers already on the map
+          v.eachLayer(function(l){ if(l.eachLayer) attachEvents(l); });
+          // Also update active layer name when user manually checks LayerControl
+          v.on('overlayadd', function(e){
+            window.__activeLayerName = e.name;
+            attachEvents(e.layer);
+          });
+          return;
+        }
+      }catch(e){}
+    }
+  }, 200);
+})();
+"""
+
 title_html = (
     "<style>"
     "@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@500&family=DM+Sans:wght@400;600&display=swap');"
@@ -611,11 +734,13 @@ title_html = (
     ".eql .er{display:flex;align-items:center;gap:6px;margin:2px 0}"
     ".eql .dt{width:9px;height:9px;border-radius:50%;flex-shrink:0}"
     ".eql span{font-size:10px;color:#b0c8b0;font-family:'DM Sans',sans-serif}"
-    ".nta-tip{background:rgba(8,12,8,0.93)!important;border:1px solid #2fa05e!important;"
-    "border-radius:4px!important;padding:7px 11px!important;"
-    "box-shadow:0 2px 10px rgba(0,0,0,0.55)!important;pointer-events:none}"
-    ".leaflet-tooltip.nta-tip::before{display:none!important}"
     "</style>"
+    "<div id='custom-tooltip' style='"
+    "position:fixed;background:#0d1117;color:#cce0cc;padding:8px 12px;"
+    "border-radius:4px;font-family:DM Sans,sans-serif;font-size:12px;"
+    "pointer-events:none;z-index:99999;border:1px solid #2fa05e;"
+    "display:none;max-width:240px;line-height:1.5;"
+    "'></div>"
     "<div class='eql'><h4>Equity Status</h4>"
     "<div class='er'><div class='dt' style='background:#2fa05e'></div><span>Well-Served</span></div>"
     "<div class='er'><div class='dt' style='background:#a8e6bf'></div><span>Adequate</span></div>"
@@ -623,97 +748,7 @@ title_html = (
     "<div class='er'><div class='dt' style='background:#d94f00'></div><span>Underserved</span></div>"
     "<div class='er'><div class='dt' style='background:#6d0000'></div><span>Critical</span></div>"
     "</div>"
-    "<script>"
-    "(function(){"
-    "var EQ={'Well-Served':'#2fa05e','Adequate':'#a8e6bf','Needs Attention':'#f5b800','Underserved':'#d94f00','Critical':'#6d0000'};"
-
-    # ── layer-aware tooltip factory ───────────────────────────────────
-    "function getTip(p,name){"
-    "var html='<div style=\"font-family:DM Sans,sans-serif;min-width:155px\">'"
-    "+'<b style=\"font-size:13px;color:#e8f0e8;display:block;margin-bottom:5px\">'+(p.nta_name||'')+'</b>';"
-
-    # Tree Density
-    "if(name.indexOf('Tree Density')>=0){"
-    "var dens=Math.round(parseFloat(p.density_2015)||0).toLocaleString();"
-    "html+='<div style=\"color:#b0cbb0;font-size:11px;margin-bottom:4px\">🌳 '+dens+' trees/km²</div>'"
-    "+'<span style=\"background:'+(EQ[p.equity_label]||'#888')+';color:#fff;"
-    "padding:2px 8px;border-radius:3px;font-size:10px\">'+(p.equity_label||'')+'</span>';"
-
-    # Median Income
-    "}else if(name.indexOf('Income')>=0){"
-    "var inc=parseInt(p.median_income)||0;"
-    "var sc=inc>=63000?'#2fa05e':'#d94f00';"
-    "html+='<div style=\"color:#b0cbb0;font-size:11px;margin-bottom:4px\">💵 $'+inc.toLocaleString()+' median income</div>'"
-    "+'<span style=\"color:'+sc+';font-size:10px\">'+(inc>=63000?'↑ above NYC avg':'↓ below NYC avg')+'</span>';"
-
-    # Underserved Index
-    "}else if(name.indexOf('Underserved')>=0){"
-    "var score=(parseFloat(p.underserved)||0).toFixed(2);"
-    "html+='<div style=\"color:#b0cbb0;font-size:11px;margin-bottom:4px\">🔴 Underserved Score: '+score+'</div>'"
-    "+'<span style=\"background:'+(EQ[p.equity_label]||'#888')+';color:#fff;"
-    "padding:2px 8px;border-radius:3px;font-size:10px\">'+(p.equity_label||'')+'</span>';"
-
-    # Tree Change
-    "}else if(name.indexOf('Change')>=0||name.indexOf('Canopy')>=0){"
-    "var chg=parseInt(p.tree_change)||0;"
-    "var cc=chg>=0?'#2fa05e':'#d94f00';"
-    "var icon=chg>=0?'📈 +':'📉 ';"
-    "html+='<div style=\"color:'+cc+';font-size:11px\">'+icon+Math.abs(chg).toLocaleString()+' trees since 2005</div>';"
-
-    # Heat Vulnerability
-    "}else if(name.indexOf('Heat')>=0){"
-    "var heat=parseFloat(p.heat_proxy)||0;"
-    "var hl=heat>=0.75?'Critical':heat>=0.55?'High':heat>=0.35?'Moderate':'Low';"
-    "var hc=heat>=0.75?'#c0392b':heat>=0.55?'#d94f00':heat>=0.35?'#f5b800':'#2fa05e';"
-    "html+='<div style=\"color:#b0cbb0;font-size:11px;margin-bottom:4px\">🌡 Heat Risk: '+heat.toFixed(3)+'</div>'"
-    "+'<span style=\"color:'+hc+';font-size:10px\">'+hl+'</span>';"
-
-    # Air Quality / PM2.5
-    "}else if(name.indexOf('Air')>=0||name.indexOf('PM')>=0){"
-    "var pm=parseFloat(p.pm25)||0;"
-    "if(pm>0){"
-    "var pml=pm<8?'Clean':pm<10?'Moderate':pm<12?'Poor':'Hazardous';"
-    "var pmc=pm<8?'#2fa05e':pm<10?'#f5b800':'#c0392b';"
-    "html+='<div style=\"color:#b0cbb0;font-size:11px;margin-bottom:4px\">💨 PM2.5: '+pm.toFixed(1)+' μg/m³</div>'"
-    "+'<span style=\"color:'+pmc+';font-size:10px\">'+pml+'</span>';"
-    "}else{html+='<div style=\"color:#b0cbb0;font-size:11px\">💨 PM2.5: N/A</div>';}"
-
-    # Fallback
-    "}else{"
-    "html+='<span style=\"background:'+(EQ[p.equity_label]||'#888')+';color:#fff;"
-    "padding:2px 8px;border-radius:3px;font-size:10px\">'+(p.equity_label||'')+'</span>';"
-    "}"
-
-    "return html+'</div>';}"
-
-    # ── bind all features inside a FeatureGroup with the given layer name ──
-    "function bindFG(fg,name){"
-    "if(!fg||!fg.eachLayer)return;"
-    "fg.eachLayer(function(s){"
-    "if(s.feature&&s.feature.properties)"
-    "s.bindTooltip(getTip(s.feature.properties,name),{sticky:true,className:'nta-tip'});"
-    "});}"
-
-    # ── polling loop: wait for map + LayerControl, then wire everything ───
-    "var t=setInterval(function(){"
-    "for(var k in window){try{var v=window[k];"
-    "if(v&&typeof v==='object'&&v.getZoom&&v.eachLayer){"
-    "clearInterval(t);"
-    # Build a stamp→name map from the LayerControl _layers array
-    "var nm={};"
-    "for(var j in window){try{var c=window[j];"
-    "if(c&&c._layers&&Array.isArray(c._layers)){"
-    "c._layers.forEach(function(it){if(it.overlay&&it.name)nm[L.stamp(it.layer)]=it.name;});}"
-    "}catch(e2){}}"
-    # Bind tooltips to all currently-on-map FeatureGroups
-    "v.eachLayer(function(l){if(l.eachLayer)bindFG(l,nm[L.stamp(l)]||'');});"
-    # Re-bind whenever a hidden layer is toggled on
-    "v.on('overlayadd',function(e){bindFG(e.layer,e.name);});"
-    "return;}"
-    "}catch(e){}}"
-    "},200);"
-    "})();"
-    "</script>"
+    "<script>" + _TOOLTIP_JS + "</script>"
 )
 m.get_root().html.add_child(Element(title_html))
 
