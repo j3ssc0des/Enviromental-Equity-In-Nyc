@@ -167,11 +167,14 @@
     .mtab:hover  { color: var(--text); border-color: var(--muted); }
     .mtab.active { color: var(--green); border-color: var(--green); background: var(--green-lo); }
 
-    .panel-body { flex: 1; overflow-y: auto; padding: 16px; }
+    .panel-body {
+      flex: 1; overflow-y: auto; padding: 16px;
+      display: flex; flex-direction: column;
+    }
     .panel-body::-webkit-scrollbar { width: 3px; }
     .panel-body::-webkit-scrollbar-thumb { background: var(--border); }
 
-    .placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+    .placeholder { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
     .ph-dashes { font-family: var(--mono); font-size: 2.8rem; color: var(--border); letter-spacing: 0.4em; }
     .ph-hint { font-size: 0.78rem; color: var(--muted); text-align: center; max-width: 190px; line-height: 1.55; }
 
@@ -442,6 +445,25 @@
     .ct-reset-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--muted); font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.06em; padding: 5px 8px; border-radius: 3px; cursor: pointer; transition: all 0.15s; }
     .ct-reset-btn:hover { color: var(--orange); border-color: rgba(217,79,0,0.4); }
 
+    /* ── LAYER TOGGLE BUTTONS ───────────────────────────────── */
+    .layer-btns-row { display: flex; gap: 3px; margin-bottom: 9px; }
+    .layer-btn {
+      font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.07em;
+      color: var(--muted); background: transparent; border: 1px solid var(--border);
+      border-radius: 3px; padding: 4px 6px; cursor: pointer; flex: 1;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      white-space: nowrap; text-align: center;
+    }
+    .layer-btn:hover  { color: var(--text); border-color: var(--muted); }
+    .layer-btn.active { color: var(--green); border-color: var(--green); background: var(--green-lo); }
+
+    /* ── COMPARE SECTION ────────────────────────────────────── */
+    .compare-section { border-top: 1px solid var(--border); padding-top: 11px; margin-top: 11px; }
+    .compare-section-label {
+      font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+
     /* ── RESPONSIVE ────────────────────────────────────────── */
     @media (max-width: 900px) {
       .charts-grid { grid-template-columns: 1fr; }
@@ -528,17 +550,19 @@
 
       <div class="panel-col">
         <div class="panel-header">
-          <div class="search-row">
-            <input type="text" class="search-input" id="search-a" placeholder="🔍 Neighborhood A…" autocomplete="off">
-            <button class="search-clear" id="search-a-clear">✕</button>
-            <div class="search-dropdown" id="search-a-dd"></div>
+          <div class="layer-btns-row">
+            <button class="layer-btn active" data-layer="🌳 Tree Density (2015)">Tree Density</button>
+            <button class="layer-btn" data-layer="💵 Median Household Income">Income</button>
+            <button class="layer-btn" data-layer="🔴 Underserved Index">Underserved</button>
+            <button class="layer-btn" data-layer="🌡 Urban Heat Vulnerability">Heat</button>
           </div>
-          <div class="search-row">
-            <input type="text" class="search-input" id="search-b" placeholder="🔍 Neighborhood B to compare…" autocomplete="off">
-            <button class="search-clear" id="search-b-clear">✕</button>
-            <div class="search-dropdown" id="search-b-dd"></div>
+          <div class="panel-eyebrow">Select Neighborhood to Analyse</div>
+          <div class="metric-tabs">
+            <button class="mtab active" data-tab="trees">TREES</button>
+            <button class="mtab" data-tab="income">INCOME</button>
+            <button class="mtab" data-tab="equity">EQUITY</button>
+            <button class="mtab" data-tab="heat">HEAT</button>
           </div>
-          <button class="benchmark-toggle" id="benchmark-toggle">🏆 Compare vs NYC Healthy Benchmark</button>
         </div>
         <div class="panel-body" id="panel-body">
           <!-- Placeholder (no neighborhood selected) -->
@@ -547,22 +571,48 @@
             <div class="ph-hint">Click any neighborhood on the map to load its data</div>
           </div>
 
-          <!-- Loaded state: shared header + four tab panels -->
+          <!-- Loaded state: shared overview + tab detail panels -->
           <div class="nta-data" id="nta-data">
             <div class="nta-name" id="nta-name"></div>
             <div class="nta-meta">
               <span class="nta-boro" id="nta-boro"></span>
               <span class="eq-badge" id="eq-badge"></span>
             </div>
-            <div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-              <div class="metric-tabs" style="flex:1">
-                <button class="mtab active" data-tab="trees">TREES</button>
-                <button class="mtab" data-tab="income">INCOME</button>
-                <button class="mtab" data-tab="equity">EQUITY</button>
-                <button class="mtab" data-tab="heat">HEAT</button>
+
+            <!-- 4 stat cards in 2×2 grid (always visible) -->
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="sb-label">Trees 2015</div>
+                <div class="sb-value" id="sb-trees-count"></div>
               </div>
-              <button class="zoom-btn" id="zoom-btn-a" style="flex:none">⊕ Zoom</button>
+              <div class="stat-box">
+                <div class="sb-label">Density / km²</div>
+                <div class="sb-value" id="sb-density-val"></div>
+              </div>
+              <div class="stat-box">
+                <div class="sb-label">Median Income</div>
+                <div class="sb-value" id="sb-income-val"></div>
+              </div>
+              <div class="stat-box">
+                <div class="sb-label">Equity Score</div>
+                <div class="sb-value" id="sb-equity-score"></div>
+              </div>
             </div>
+
+            <!-- Underserved score bar (always visible) -->
+            <div class="score-section">
+              <div class="score-header">
+                <span class="score-title">Underserved index</span>
+                <span class="score-num" id="tp-score-num"></span>
+              </div>
+              <div class="score-track"><div class="score-fill" id="tp-score-fill"></div></div>
+              <div class="score-ends"><span>WELL-SERVED</span><span>CRITICAL</span></div>
+            </div>
+
+            <!-- Plain English summary (always visible) -->
+            <div class="panel-divider"></div>
+            <div class="nta-summary" id="tp-equity-summary"></div>
+            <div class="panel-divider"></div>
 
             <!-- TREES TAB PANEL -->
             <div class="tab-panel active" id="tp-trees">
@@ -626,16 +676,6 @@
                 <div class="hero-num" id="tp-score-big"></div>
                 <div class="hero-label">Underserved index (0 = well-served, 1 = critical)</div>
               </div>
-              <div class="score-section">
-                <div class="score-header">
-                  <span class="score-title">Equity score</span>
-                  <span class="score-num" id="tp-score-num"></span>
-                </div>
-                <div class="score-track"><div class="score-fill" id="tp-score-fill"></div></div>
-                <div class="score-ends"><span>WELL-SERVED</span><span>CRITICAL</span></div>
-              </div>
-              <div class="panel-divider"></div>
-              <div class="nta-summary" id="tp-equity-summary"></div>
             </div>
 
             <!-- HEAT TAB PANEL -->
@@ -658,8 +698,22 @@
 
           </div><!-- /.nta-data -->
 
-          <!-- Compare panel: shown when A + B/benchmark are selected -->
-          <div class="compare-panel" id="compare-panel" style="display:none"></div>
+          <!-- COMPARE NEIGHBORHOODS section (always visible at bottom) -->
+          <div class="compare-section">
+            <div class="compare-section-label">Compare Neighborhoods</div>
+            <div class="search-row">
+              <input type="text" class="search-input" id="search-a" placeholder="🔍 Neighborhood A…" autocomplete="off">
+              <button class="search-clear" id="search-a-clear">✕</button>
+              <div class="search-dropdown" id="search-a-dd"></div>
+            </div>
+            <div class="search-row">
+              <input type="text" class="search-input" id="search-b" placeholder="🔍 Neighborhood B to compare…" autocomplete="off">
+              <button class="search-clear" id="search-b-clear">✕</button>
+              <div class="search-dropdown" id="search-b-dd"></div>
+            </div>
+            <button class="benchmark-toggle" id="benchmark-toggle">🏆 Compare vs NYC Healthy Benchmark</button>
+            <div class="compare-panel" id="compare-panel" style="display:none;margin-top:8px"></div>
+          </div>
 
         </div>
       </div>
@@ -964,6 +1018,16 @@ function updatePanel(p) {
     }
   }
 
+  // ── SHARED 2×2 STAT BOXES ─────────────────────────────────
+  const sbTrees = document.getElementById('sb-trees-count');
+  if (sbTrees) sbTrees.textContent = trees.toLocaleString();
+  const sbDens = document.getElementById('sb-density-val');
+  if (sbDens) sbDens.textContent = dens.toFixed(0);
+  const sbInc = document.getElementById('sb-income-val');
+  if (sbInc) sbInc.textContent = '$' + Math.round(income / 1000) + 'k';
+  const sbScore = document.getElementById('sb-equity-score');
+  if (sbScore) { sbScore.textContent = score.toFixed(2); sbScore.style.color = scoreToColor(score); }
+
   // Show the loaded state
   document.getElementById('placeholder').style.display = 'none';
   const dataEl = document.getElementById('nta-data');
@@ -1059,9 +1123,6 @@ function initSearch() {
   });
 
   document.getElementById('benchmark-toggle').addEventListener('click', toggleBenchmark);
-  document.getElementById('zoom-btn-a').addEventListener('click', function() {
-    if (searchAProps) zoomToNTA(searchAProps.nta_name);
-  });
 }
 
 function selectNeighborhoodA(props) {
@@ -1163,7 +1224,7 @@ function benchRating(val, target, better) {
 function buildCompareTable(pA, pBorBench) {
   const isBench = !!pBorBench._isBenchmark;
   document.getElementById('placeholder').style.display = 'none';
-  document.getElementById('nta-data').classList.remove('visible');
+  updatePanel(pA);
 
   resetHighlights();
   highlightNTA(pA.nta_name, '#2fa05e');
@@ -1300,6 +1361,30 @@ function makeGapAnalysis(pA, pBorBench, isBench, scoreA, scoreB, total) {
   const joined = parts.length === 1 ? parts[0]
     : parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1];
   return `${nameA} is ${joined}. It currently meets <b>${scoreA} of ${total}</b> healthy neighborhood benchmarks.`;
+}
+
+/* ── LAYER TOGGLE BUTTONS ──────────────────────────────────── */
+const MAIN_LAYERS = [
+  '🌳 Tree Density (2015)',
+  '💵 Median Household Income',
+  '🔴 Underserved Index',
+  '🌡 Urban Heat Vulnerability',
+];
+
+function initLayerButtons() {
+  document.querySelectorAll('.layer-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (this.classList.contains('active')) return;
+      document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const target = this.dataset.layer;
+      const frame = document.getElementById('map-frame');
+      if (!frame || !frame.contentWindow) return;
+      MAIN_LAYERS.forEach(function(name) {
+        frame.contentWindow.postMessage({ type: 'toggle_layer', name: name, show: name === target }, '*');
+      });
+    });
+  });
 }
 
 /* ── BOROUGH STATS ─────────────────────────────────────────── */
@@ -1515,6 +1600,9 @@ function injectIntoIframe() {
             });
           });
         }
+        if(msg.data.type==='toggle_layer'){
+          if(window.__toggleLayer) window.__toggleLayer(msg.data.name, msg.data.show);
+        }
       });
     })();`;
     iDoc.head.appendChild(s);
@@ -1557,6 +1645,8 @@ document.querySelectorAll('.nav-tab').forEach(function(btn) {
     if (tab === 'heat')    buildHeatIndex();
   });
 });
+
+initLayerButtons();
 
 /* ── PANEL METRIC TABS ─────────────────────────────────────── */
 document.querySelectorAll('.mtab').forEach(function(btn) {
