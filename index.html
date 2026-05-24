@@ -142,43 +142,15 @@
 
     /* ── DASHBOARD (GEO MAP) ───────────────────────────────── */
     .dashboard {
-      display: flex; height: 680px;
+      display: flex; height: calc(100vh - 50px);
       border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     }
-    .map-col { flex: 0 0 65%; position: relative; border-right: 1px solid var(--border); }
+    .map-col { flex: 0 0 65%; height: 100%; position: relative; border-right: 1px solid var(--border); overflow: hidden; }
     .map-col iframe { width: 100%; height: 100%; border: none; display: block; }
-
-    .filter-panel {
-      position: absolute; top: 12px; left: 12px; z-index: 400;
-      background: rgba(10,13,18,0.92); border: 1px solid var(--green-border);
-      border-radius: 6px; padding: 9px 13px; backdrop-filter: blur(10px); min-width: 138px;
-    }
-    .filter-title {
-      font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.18em;
-      color: var(--muted); text-transform: uppercase;
-      margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
-    }
-    .filter-label {
-      display: flex; align-items: center; gap: 8px; font-size: 0.76rem; color: var(--text);
-      padding: 3px 0; cursor: pointer; user-select: none; transition: color 0.15s;
-    }
-    .filter-label:hover { color: var(--green); }
-    .filter-cb {
-      appearance: none; width: 13px; height: 13px;
-      border: 1px solid var(--muted); border-radius: 2px; background: transparent;
-      cursor: pointer; flex-shrink: 0; position: relative;
-      transition: background 0.15s, border-color 0.15s;
-    }
-    .filter-cb:checked { background: var(--green); border-color: var(--green); }
-    .filter-cb:checked::after {
-      content: ''; position: absolute; top: 1px; left: 3px;
-      width: 5px; height: 8px; border: 2px solid #0a0d12;
-      border-top: none; border-left: none; transform: rotate(45deg);
-    }
 
     .panel-col {
       flex: 0 0 35%; background: var(--panel-bg);
-      display: flex; flex-direction: column; overflow: hidden;
+      display: flex; flex-direction: column; overflow: hidden; min-width: 0;
     }
     .panel-header { padding: 12px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .panel-eyebrow {
@@ -232,6 +204,62 @@
       border-left: 2px solid var(--green); border-radius: 0 5px 5px 0;
       padding: 10px 12px; font-size: 0.8rem; line-height: 1.62; color: var(--muted);
     }
+
+    /* ── PER-TAB PANEL SECTIONS ──────────────────────────── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fadein 0.22s ease; }
+
+    /* Large hero number */
+    .hero-stat { margin-bottom: 14px; }
+    .hero-num {
+      font-family: var(--mono); font-size: 2rem; font-weight: 700;
+      color: var(--green); line-height: 1; margin-bottom: 3px;
+      text-shadow: 0 0 20px rgba(47,160,94,0.3);
+    }
+    .hero-label { font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+    /* Secondary stat row */
+    .sec-stats { display: flex; gap: 6px; margin-bottom: 12px; }
+    .sec-box { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 8px 10px; }
+    .sec-label { font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+    .sec-val { font-family: var(--mono); font-size: 0.9rem; font-weight: 700; color: var(--green); }
+    .sec-val.neg { color: var(--orange); }
+    .sec-val.pos { color: var(--green); }
+
+    /* Change with arrow */
+    .change-arrow { font-size: 1.1em; margin-right: 2px; }
+
+    /* Comparison bar (density vs avg, income rank, etc.) */
+    .cmp-section { margin-bottom: 12px; }
+    .cmp-label-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .cmp-label { font-family: var(--mono); font-size: 0.54rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .cmp-note { font-family: var(--mono); font-size: 0.54rem; color: var(--muted); }
+    .cmp-track { height: 8px; background: var(--surface); border-radius: 4px; overflow: visible; position: relative; margin-bottom: 3px; }
+    .cmp-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+    .cmp-marker {
+      position: absolute; top: -3px; width: 2px; height: 14px;
+      background: rgba(255,255,255,0.35); border-radius: 1px;
+    }
+    .cmp-marker-label {
+      position: absolute; top: 16px; transform: translateX(-50%);
+      font-family: var(--mono); font-size: 0.48rem; color: rgba(255,255,255,0.35);
+      white-space: nowrap;
+    }
+    .cmp-ends { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.5rem; color: var(--muted); }
+
+    /* Income compare badge */
+    .avg-compare {
+      display: inline-flex; align-items: center; gap: 5px;
+      border-radius: 4px; padding: 4px 10px; margin-bottom: 12px;
+      font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.06em;
+    }
+
+    /* Heat panel */
+    .heat-hero-num { font-family: var(--mono); font-size: 2rem; font-weight: 700; color: var(--orange); line-height: 1; margin-bottom: 3px; }
+    .heat-explain { font-size: 0.8rem; line-height: 1.6; color: var(--muted); margin-bottom: 12px; }
+    .boro-compare { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 9px 11px; }
+    .boro-compare-label { font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+    .boro-compare-val { font-family: var(--mono); font-size: 0.82rem; color: var(--text); }
 
     /* ── TICKER ────────────────────────────────────────────── */
     .ticker {
@@ -341,6 +369,79 @@
     .footer-credit { font-size: 0.75rem; color: var(--muted); }
     .footer-note { font-family: var(--mono); font-size: 0.62rem; color: var(--muted); letter-spacing: 0.04em; padding-top: 0.25rem; border-top: 1px solid var(--border); }
 
+    /* ── SEARCH BARS ────────────────────────────────────────── */
+    .search-row { position: relative; margin-bottom: 5px; }
+    .search-input {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 4px; padding: 6px 26px 6px 10px; color: var(--text);
+      font-family: var(--sans); font-size: 0.8rem; outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: rgba(47,160,94,0.5); }
+    .search-input.filled { border-color: rgba(47,160,94,0.45); }
+    .search-clear {
+      position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+      background: transparent; border: none; color: var(--muted); cursor: pointer;
+      font-size: 0.7rem; padding: 0; line-height: 1; display: none;
+    }
+    .search-clear:hover { color: var(--text); }
+    .search-dropdown {
+      position: absolute; top: calc(100% + 2px); left: 0; right: 0; z-index: 500;
+      background: #0e1318; border: 1px solid rgba(47,160,94,0.3);
+      border-radius: 4px; max-height: 180px; overflow-y: auto;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5); display: none;
+    }
+    .search-dropdown.open { display: block; }
+    .sdd-item {
+      padding: 6px 10px; font-size: 0.78rem; cursor: pointer; color: var(--text);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .sdd-item:last-child { border-bottom: none; }
+    .sdd-item:hover { background: rgba(47,160,94,0.1); color: #fff; }
+    .sdd-boro { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); flex-shrink: 0; }
+    .benchmark-toggle {
+      width: 100%; margin-top: 2px; padding: 6px 10px;
+      background: transparent; border: 1px solid rgba(212,175,55,0.25);
+      border-radius: 4px; color: var(--muted); font-family: var(--mono);
+      font-size: 0.56rem; letter-spacing: 0.06em; cursor: pointer;
+      transition: all 0.15s; text-align: left;
+    }
+    .benchmark-toggle:hover { border-color: rgba(212,175,55,0.55); color: #d4af37; background: rgba(212,175,55,0.05); }
+    .benchmark-toggle.active { border-color: #d4af37; color: #d4af37; background: rgba(212,175,55,0.08); }
+
+    /* ── COMPARISON TABLE ────────────────────────────────── */
+    .compare-panel { animation: fadein 0.28s ease; }
+    .ct-grid-hdr { display: grid; grid-template-columns: 38% 31% 31%; gap: 3px; margin-bottom: 6px; }
+    .ct-grid-row { display: grid; grid-template-columns: 38% 31% 31%; gap: 3px; margin-bottom: 3px; align-items: center; }
+    .ct-metric-lbl { font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 2px 0; line-height: 1.3; }
+    .ct-hdr-cell { padding: 5px 4px; border-radius: 3px; font-family: var(--mono); font-size: 0.5rem; text-align: center; }
+    .ct-hdr-cell.a-hdr { background: rgba(47,160,94,0.08); border: 1px solid rgba(47,160,94,0.2); }
+    .ct-hdr-cell.b-hdr { background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); }
+    .ct-hdr-cell.bench-hdr { background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25); }
+    .ct-hdr-name { font-size: 0.68rem; font-weight: 600; color: #e8f0e8; line-height: 1.2; display: block; margin-bottom: 2px; }
+    .ct-hdr-boro { font-family: var(--mono); font-size: 0.5rem; color: var(--muted); display: block; }
+    .ct-hdr-badge { display: inline-block; font-family: var(--mono); font-size: 0.46rem; padding: 1px 5px; border-radius: 2px; margin-top: 3px; }
+    .ct-cell { padding: 5px 4px; border-radius: 3px; font-family: var(--mono); font-size: 0.68rem; text-align: center; }
+    .ct-cell.good     { background: rgba(47,160,94,0.12);  color: #4ecb80; }
+    .ct-cell.warn     { background: rgba(245,184,0,0.10);  color: #f5b800; }
+    .ct-cell.bad      { background: rgba(217,79,0,0.12);   color: #d94f00; }
+    .ct-cell.bench-tgt{ background: rgba(212,175,55,0.08); color: #c4a33a; font-size: 0.64rem; }
+    .ct-cell.b-good   { background: rgba(47,160,94,0.08);  color: #4ecb80; }
+    .ct-cell.b-warn   { background: rgba(245,184,0,0.08);  color: #f5b800; }
+    .ct-cell.b-bad    { background: rgba(217,79,0,0.08);   color: #d94f00; }
+    .ct-cell.win      { font-weight: 700; }
+    .ct-score { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.58rem; color: var(--muted); margin: 8px 0 4px; padding: 0 2px; }
+    .ct-score b { color: var(--green); }
+    .ct-gap { background: rgba(47,160,94,0.05); border: 1px solid rgba(47,160,94,0.12); border-left: 2px solid var(--green); border-radius: 0 4px 4px 0; padding: 9px 11px; font-size: 0.76rem; line-height: 1.62; color: var(--muted); margin: 6px 0 8px; }
+    .ct-gap b { color: var(--green); }
+    .ct-actions { display: flex; gap: 6px; }
+    .zoom-btn { display: inline-flex; align-items: center; gap: 4px; background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.06em; padding: 5px 8px; border-radius: 3px; cursor: pointer; transition: all 0.15s; flex: 1; justify-content: center; }
+    .zoom-btn:hover { color: var(--green); border-color: rgba(47,160,94,0.4); }
+    .ct-reset-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--muted); font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.06em; padding: 5px 8px; border-radius: 3px; cursor: pointer; transition: all 0.15s; }
+    .ct-reset-btn:hover { color: var(--orange); border-color: rgba(217,79,0,0.4); }
+
     /* ── RESPONSIVE ────────────────────────────────────────── */
     @media (max-width: 900px) {
       .charts-grid { grid-template-columns: 1fr; }
@@ -401,19 +502,19 @@
     <div class="tips-grid">
       <div class="tip">
         <div class="tip-icon">👆</div>
-        <p><strong>Click any neighborhood</strong> to see its tree count, density, income, and equity score in the panel on the right</p>
+        <p>Click any neighborhood on the map to see its full breakdown on the right, including tree count, income, air quality, and how it compares to the rest of NYC</p>
       </div>
       <div class="tip">
         <div class="tip-icon">🗂</div>
-        <p><strong>Use the layer switcher</strong> (top right of map) to swap between tree density, income, and heat views</p>
+        <p>Switch map layers using the panel inside the map. Each layer highlights a different inequality: tree coverage, household income, heat risk, or air quality</p>
       </div>
       <div class="tip">
         <div class="tip-icon">🔴</div>
-        <p><strong>Red markers</strong> show the 15 most underserved neighborhoods, where low tree cover and low income overlap</p>
+        <p>Orange dots mark the 15 most underserved neighborhoods, where low tree cover, low income, and poor air quality overlap the most</p>
       </div>
       <div class="tip">
         <div class="tip-icon">📊</div>
-        <p><strong>Switch tabs</strong> above to compare boroughs side by side or see the heat vulnerability ranking</p>
+        <p>Use Borough Stats and Heat Index tabs at the top to see how the five boroughs compare and which neighborhoods face the highest environmental risk</p>
       </div>
     </div>
   </div>
@@ -422,54 +523,144 @@
   <div id="tab-geomap" class="tab-view active">
     <div class="dashboard">
       <div class="map-col">
-        <div class="filter-panel">
-          <div class="filter-title">Layers</div>
-          <label class="filter-label"><input type="checkbox" class="filter-cb" data-layer="density" checked> Tree Density</label>
-          <label class="filter-label"><input type="checkbox" class="filter-cb" data-layer="income"> Income</label>
-          <label class="filter-label"><input type="checkbox" class="filter-cb" data-layer="underserved"> Underserved</label>
-          <label class="filter-label"><input type="checkbox" class="filter-cb" data-layer="heat"> Heat</label>
-        </div>
         <iframe id="map-frame" src="nyc_trees_map.html" title="NYC Green Space Inequity — Interactive Map" allowfullscreen></iframe>
       </div>
 
       <div class="panel-col">
         <div class="panel-header">
-          <div class="panel-eyebrow">Select neighborhood to analyse</div>
-          <div class="metric-tabs">
-            <button class="mtab active" data-tab="trees">TREES</button>
-            <button class="mtab" data-tab="income">INCOME</button>
-            <button class="mtab" data-tab="equity">EQUITY</button>
-            <button class="mtab" data-tab="heat">HEAT</button>
+          <div class="search-row">
+            <input type="text" class="search-input" id="search-a" placeholder="🔍 Neighborhood A…" autocomplete="off">
+            <button class="search-clear" id="search-a-clear">✕</button>
+            <div class="search-dropdown" id="search-a-dd"></div>
           </div>
+          <div class="search-row">
+            <input type="text" class="search-input" id="search-b" placeholder="🔍 Neighborhood B to compare…" autocomplete="off">
+            <button class="search-clear" id="search-b-clear">✕</button>
+            <div class="search-dropdown" id="search-b-dd"></div>
+          </div>
+          <button class="benchmark-toggle" id="benchmark-toggle">🏆 Compare vs NYC Healthy Benchmark</button>
         </div>
         <div class="panel-body" id="panel-body">
+          <!-- Placeholder (no neighborhood selected) -->
           <div class="placeholder" id="placeholder">
             <div class="ph-dashes">- -</div>
             <div class="ph-hint">Click any neighborhood on the map to load its data</div>
           </div>
+
+          <!-- Loaded state: shared header + four tab panels -->
           <div class="nta-data" id="nta-data">
             <div class="nta-name" id="nta-name"></div>
             <div class="nta-meta">
               <span class="nta-boro" id="nta-boro"></span>
               <span class="eq-badge" id="eq-badge"></span>
             </div>
-            <div class="stats-grid">
-              <div class="stat-box"><div class="sb-label">Trees 2015</div><div class="sb-value" id="s-trees"></div></div>
-              <div class="stat-box"><div class="sb-label">Density / km²</div><div class="sb-value" id="s-density"></div></div>
-              <div class="stat-box"><div class="sb-label">Median Income</div><div class="sb-value" id="s-income"></div></div>
-              <div class="stat-box"><div class="sb-label">Change vs 2005</div><div class="sb-value" id="s-change"></div></div>
-            </div>
-            <div class="score-section">
-              <div class="score-header">
-                <span class="score-title">Underserved Index</span>
-                <span class="score-num" id="score-num"></span>
+            <div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+              <div class="metric-tabs" style="flex:1">
+                <button class="mtab active" data-tab="trees">TREES</button>
+                <button class="mtab" data-tab="income">INCOME</button>
+                <button class="mtab" data-tab="equity">EQUITY</button>
+                <button class="mtab" data-tab="heat">HEAT</button>
               </div>
-              <div class="score-track"><div class="score-fill" id="score-fill"></div></div>
-              <div class="score-ends"><span>WELL-SERVED</span><span>CRITICAL</span></div>
+              <button class="zoom-btn" id="zoom-btn-a" style="flex:none">⊕ Zoom</button>
             </div>
-            <div class="panel-divider"></div>
-            <div class="nta-summary" id="nta-summary"></div>
-          </div>
+
+            <!-- TREES TAB PANEL -->
+            <div class="tab-panel active" id="tp-trees">
+              <div class="hero-stat">
+                <div class="hero-num" id="tp-trees-2015"></div>
+                <div class="hero-label">Street trees in 2015</div>
+              </div>
+              <div class="sec-stats">
+                <div class="sec-box">
+                  <div class="sec-label">Trees 2005</div>
+                  <div class="sec-val" id="tp-trees-2005"></div>
+                </div>
+                <div class="sec-box">
+                  <div class="sec-label">Change</div>
+                  <div class="sec-val" id="tp-change"></div>
+                </div>
+                <div class="sec-box">
+                  <div class="sec-label">Density/km²</div>
+                  <div class="sec-val" id="tp-density"></div>
+                </div>
+              </div>
+              <div class="cmp-section">
+                <div class="cmp-label-row">
+                  <span class="cmp-label">Density vs NYC average (874/km²)</span>
+                  <span class="cmp-note" id="tp-dens-note"></span>
+                </div>
+                <div class="cmp-track">
+                  <div class="cmp-fill" id="tp-dens-fill"></div>
+                  <div class="cmp-marker" id="tp-dens-marker">
+                    <div class="cmp-marker-label">NYC avg</div>
+                  </div>
+                </div>
+                <div class="cmp-ends"><span>0</span><span id="tp-dens-max"></span></div>
+              </div>
+            </div>
+
+            <!-- INCOME TAB PANEL -->
+            <div class="tab-panel" id="tp-income">
+              <div class="hero-stat">
+                <div class="hero-num" id="tp-income-val"></div>
+                <div class="hero-label">Median household income</div>
+              </div>
+              <div id="tp-income-badge" class="avg-compare"></div>
+              <div class="cmp-section">
+                <div class="cmp-label-row">
+                  <span class="cmp-label">Income rank among 195 neighborhoods</span>
+                  <span class="cmp-note" id="tp-rank-note"></span>
+                </div>
+                <div class="cmp-track">
+                  <div class="cmp-fill" id="tp-income-fill" style="background:var(--purple)"></div>
+                </div>
+                <div class="cmp-ends"><span>Lowest</span><span>Highest</span></div>
+              </div>
+              <div class="panel-divider"></div>
+              <div class="nta-summary" id="tp-income-note"></div>
+            </div>
+
+            <!-- EQUITY TAB PANEL -->
+            <div class="tab-panel" id="tp-equity">
+              <div class="hero-stat">
+                <div class="hero-num" id="tp-score-big"></div>
+                <div class="hero-label">Underserved index (0 = well-served, 1 = critical)</div>
+              </div>
+              <div class="score-section">
+                <div class="score-header">
+                  <span class="score-title">Equity score</span>
+                  <span class="score-num" id="tp-score-num"></span>
+                </div>
+                <div class="score-track"><div class="score-fill" id="tp-score-fill"></div></div>
+                <div class="score-ends"><span>WELL-SERVED</span><span>CRITICAL</span></div>
+              </div>
+              <div class="panel-divider"></div>
+              <div class="nta-summary" id="tp-equity-summary"></div>
+            </div>
+
+            <!-- HEAT TAB PANEL -->
+            <div class="tab-panel" id="tp-heat">
+              <div class="hero-stat">
+                <div class="heat-hero-num" id="tp-heat-val"></div>
+                <div class="hero-label">Heat vulnerability score</div>
+              </div>
+              <div id="tp-heat-badge" class="avg-compare" style="margin-bottom:12px"></div>
+              <div class="heat-explain" id="tp-heat-explain"></div>
+              <div class="boro-compare" id="tp-pm25-wrap" style="margin-top:10px;margin-bottom:4px">
+                <div class="boro-compare-label">Air Quality (PM2.5)</div>
+                <div id="tp-pm25-val" class="boro-compare-val"></div>
+              </div>
+              <div class="boro-compare">
+                <div class="boro-compare-label">Borough average heat score</div>
+                <div class="boro-compare-val" id="tp-boro-heat"></div>
+              </div>
+            </div>
+
+          </div><!-- /.nta-data -->
+
+          <!-- Compare panel: shown when A + B/benchmark are selected -->
+          <div class="compare-panel" id="compare-panel" style="display:none"></div>
+
         </div>
       </div>
     </div>
@@ -564,7 +755,7 @@
           <span>·</span>
           <a href="https://data.cityofnewyork.us/resource/29bw-z7pj" target="_blank" rel="noopener">NYC Street Tree Census 2005</a>
           <span>·</span>
-          <a href="https://data.cityofnewyork.us/api/geospatial/d3qk-6yt9?method=export&type=GeoJSON" target="_blank" rel="noopener">NYC Neighborhood Tabulation Areas</a>
+          <a href="https://data.cityofnewyork.us/City-Government/2010-Census-Tract-to-Neighborhood-Tabulation-Area-/8ius-dhrr" target="_blank" rel="noopener">NYC Neighborhood Tabulation Areas</a>
           <span>·</span>
           <span>NYC Dept. of Parks &amp; Recreation</span>
         </div>
@@ -581,9 +772,19 @@
 
 <script>
 /* ── SHARED STATE ──────────────────────────────────────────── */
-let ntaData = [];
+let ntaData      = [];
 let boroughBuilt = false;
 let heatBuilt    = false;
+let searchAProps = null;
+let searchBProps = null;
+let useBenchmark = false;
+
+/* ── HEALTHY BENCHMARK TARGETS ─────────────────────────────── */
+const BENCHMARK = {
+  nta_name:'NYC Healthy Benchmark', _isBenchmark:true,
+  density_2015:1000, median_income:63000, underserved:0.30,
+  heat_proxy:0.40, pm25:8.0, tree_change:1, equity_label:'Well-Served', boro_name:'',
+};
 
 /* ── EQUITY CONFIG ─────────────────────────────────────────── */
 const EQ = {
@@ -635,45 +836,471 @@ function makeSummary(p) {
   return `${name} has average tree coverage at ${density} trees per km² and ${cStr} between 2005 and 2015.`;
 }
 
+/* ── NYC-WIDE CONSTANTS ────────────────────────────────────── */
+const NYC_AVG_DENSITY = 874;   // trees/km² citywide average
+const NYC_AVG_INCOME  = 63000; // median household income
+
 /* ── GEO MAP PANEL UPDATE ──────────────────────────────────── */
 function updatePanel(p) {
-  const label  = p.equity_label||'Adequate';
-  const colors = EQ[label]||EQ['Adequate'];
-  const trees  = parseInt(p.trees_2015)||0;
-  const dens   = (parseFloat(p.density_2015)||0).toFixed(1);
-  const income = parseInt(p.median_income)||0;
-  const change = parseInt(p.tree_change)||0;
-  const score  = parseFloat(p.underserved)||0;
+  const label  = p.equity_label || 'Adequate';
+  const colors = EQ[label] || EQ['Adequate'];
+  const trees  = parseInt(p.trees_2015)  || 0;
+  const trees5 = parseInt(p.trees_2005)  || 0;
+  const dens   = parseFloat(p.density_2015) || 0;
+  const income = parseInt(p.median_income)  || 0;
+  const change = parseInt(p.tree_change)    || 0;
+  const score  = parseFloat(p.underserved)  || 0;
+  const heat   = parseFloat(p.heat_proxy)   || 0;
+  const boro   = p.boro_name || p.borough || '';
 
-  document.getElementById('nta-name').textContent = p.nta_name||'—';
-  document.getElementById('nta-boro').textContent = (p.boro_name||p.borough||'').toUpperCase();
+  // Shared header
+  document.getElementById('nta-name').textContent = p.nta_name || '—';
+  document.getElementById('nta-boro').textContent = boro.toUpperCase();
   const badge = document.getElementById('eq-badge');
   badge.textContent = label.toUpperCase();
   badge.style.cssText = `background:${colors.bg};border:1px solid ${colors.border};color:${colors.text}`;
 
-  document.getElementById('s-trees').textContent   = trees.toLocaleString();
-  document.getElementById('s-density').textContent = dens;
-  document.getElementById('s-income').textContent  = '$'+income.toLocaleString();
-  const chEl = document.getElementById('s-change');
-  chEl.textContent = (change>=0?'+':'')+change.toLocaleString();
-  chEl.className   = 'sb-value'+(change<0?' neg':'');
+  // ── TREES PANEL ───────────────────────────────────────────
+  document.getElementById('tp-trees-2015').textContent = trees.toLocaleString();
+  document.getElementById('tp-trees-2005').textContent = trees5.toLocaleString();
+  const chEl = document.getElementById('tp-change');
+  const arrow = change >= 0 ? '↑' : '↓';
+  chEl.innerHTML = `<span class="change-arrow">${arrow}</span>${Math.abs(change).toLocaleString()}`;
+  chEl.className = 'sec-val ' + (change >= 0 ? 'pos' : 'neg');
+  document.getElementById('tp-density').textContent = dens.toFixed(0);
 
-  document.getElementById('score-num').textContent = score.toFixed(3);
-  const fill = document.getElementById('score-fill');
-  fill.style.width      = (Math.min(score,1)*100)+'%';
-  fill.style.background = scoreToColor(score);
-  document.getElementById('nta-summary').textContent = makeSummary(p);
+  // Density bar: scale to max(dens * 1.5, 2000) so bar isn't always at 100%
+  const densMax = Math.max(dens * 1.5, NYC_AVG_DENSITY * 2);
+  const densPct = Math.min((dens / densMax) * 100, 100);
+  const avgPct  = Math.min((NYC_AVG_DENSITY / densMax) * 100, 100);
+  document.getElementById('tp-dens-fill').style.cssText =
+    `width:${densPct}%;background:${dens >= NYC_AVG_DENSITY ? 'var(--green)' : 'var(--orange)'}`;
+  document.getElementById('tp-dens-marker').style.left = avgPct + '%';
+  document.getElementById('tp-dens-max').textContent = Math.round(densMax).toLocaleString();
+  document.getElementById('tp-dens-note').textContent =
+    dens >= NYC_AVG_DENSITY
+      ? `+${Math.round(dens - NYC_AVG_DENSITY).toLocaleString()} above avg`
+      : `${Math.round(NYC_AVG_DENSITY - dens).toLocaleString()} below avg`;
 
+  // ── INCOME PANEL ──────────────────────────────────────────
+  document.getElementById('tp-income-val').textContent = '$' + income.toLocaleString();
+  const aboveAvg = income >= NYC_AVG_INCOME;
+  const incBadge = document.getElementById('tp-income-badge');
+  const diff = Math.abs(income - NYC_AVG_INCOME).toLocaleString();
+  incBadge.textContent = aboveAvg
+    ? `↑ $${diff} above NYC median ($63k)`
+    : `↓ $${diff} below NYC median ($63k)`;
+  incBadge.style.cssText = aboveAvg
+    ? 'background:rgba(47,160,94,0.12);border:1px solid rgba(47,160,94,0.3);color:#2fa05e'
+    : 'background:rgba(217,79,0,0.12);border:1px solid rgba(217,79,0,0.3);color:#d94f00';
+
+  // Income rank: use sorted ntaData if available, else estimate
+  let rankPct = income / 200000; // fallback estimate
+  if (ntaData.length > 1) {
+    const sorted = ntaData.map(d => parseInt(d.median_income)||0).sort((a,b)=>a-b);
+    const rank = sorted.findIndex(v => v >= income);
+    rankPct = rank < 0 ? 1 : rank / sorted.length;
+    const rankNum = sorted.length - (rank < 0 ? sorted.length : rank);
+    document.getElementById('tp-rank-note').textContent = `#${rankNum} of ${sorted.length}`;
+  } else {
+    document.getElementById('tp-rank-note').textContent = '';
+  }
+  document.getElementById('tp-income-fill').style.width = (Math.min(rankPct, 1) * 100) + '%';
+
+  document.getElementById('tp-income-note').textContent =
+    aboveAvg
+      ? `${p.nta_name} has a higher-than-average income and tends to have better green space access.`
+      : `${p.nta_name}'s income is below the NYC median of $63,000 — lower-income neighborhoods consistently receive less investment in street trees.`;
+
+  // ── EQUITY PANEL ──────────────────────────────────────────
+  document.getElementById('tp-score-big').textContent = score.toFixed(3);
+  document.getElementById('tp-score-num').textContent = score.toFixed(3);
+  const eqFill = document.getElementById('tp-score-fill');
+  eqFill.style.width      = (Math.min(score, 1) * 100) + '%';
+  eqFill.style.background = scoreToColor(score);
+  document.getElementById('tp-equity-summary').textContent = makeSummary(p);
+
+  // ── HEAT PANEL ────────────────────────────────────────────
+  const hLbl = heatLabel(heat);
+  document.getElementById('tp-heat-val').textContent = heat.toFixed(3);
+  document.getElementById('tp-heat-val').style.color = hLbl.text2;
+
+  const hBadge = document.getElementById('tp-heat-badge');
+  hBadge.textContent = hLbl.text;
+  hBadge.style.cssText = `background:${hLbl.bg};border:1px solid ${hLbl.border};color:${hLbl.text2};font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;border-radius:4px;padding:4px 10px;display:inline-block`;
+
+  document.getElementById('tp-heat-explain').textContent =
+    heat >= 0.75
+      ? `${p.nta_name} is among the highest heat-risk neighborhoods in NYC. With only ${dens.toFixed(0)} trees per km², there is very little shade to reduce surface temperatures during summer heat events.`
+      : heat >= 0.55
+      ? `${p.nta_name} has elevated heat vulnerability. Lower tree density means less shade and higher surface temperatures compared to better-canopied neighborhoods.`
+      : heat >= 0.35
+      ? `${p.nta_name} has moderate heat vulnerability. Increasing tree cover would meaningfully reduce local temperatures and improve comfort during hot weather.`
+      : `${p.nta_name} has relatively low heat vulnerability, with enough tree canopy to provide meaningful shade and cooling.`;
+
+  // Borough average heat
+  if (ntaData.length > 1) {
+    const boroNeighbs = ntaData.filter(d => (d.boro_name || d.borough) === boro);
+    if (boroNeighbs.length > 0) {
+      const boroAvgHeat = boroNeighbs.reduce((s,d) => s + (parseFloat(d.heat_proxy)||0), 0) / boroNeighbs.length;
+      const diff2 = heat - boroAvgHeat;
+      document.getElementById('tp-boro-heat').textContent =
+        `${boroAvgHeat.toFixed(3)} (${boro}) — this neighborhood is ${diff2 >= 0 ? '+' : ''}${diff2.toFixed(3)} vs borough avg`;
+    }
+  } else {
+    document.getElementById('tp-boro-heat').textContent = 'Click neighborhoods to compare';
+  }
+
+  // ── PM2.5 AIR QUALITY ────────────────────────────────────────
+  const pm25Val = parseFloat(p.pm25);
+  const pm25El  = document.getElementById('tp-pm25-val');
+  if (pm25El) {
+    if (!isNaN(pm25Val) && pm25Val > 0) {
+      const pm25Color = pm25Val < 8.0 ? '#2fa05e' : pm25Val < 10.0 ? '#f5b800' : '#c0392b';
+      const pm25Dot   = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${pm25Color};margin-right:5px;flex-shrink:0"></span>`;
+      pm25El.innerHTML = `${pm25Dot}<span style="color:${pm25Color};font-family:var(--mono)">${pm25Val.toFixed(1)} μg/m³</span>`;
+    } else {
+      pm25El.textContent = 'N/A';
+    }
+  }
+
+  // Show the loaded state
   document.getElementById('placeholder').style.display = 'none';
-  const data = document.getElementById('nta-data');
-  data.classList.remove('visible');
-  void data.offsetWidth;
-  data.classList.add('visible');
+  const dataEl = document.getElementById('nta-data');
+  dataEl.classList.remove('visible');
+  void dataEl.offsetWidth;
+  dataEl.classList.add('visible');
+}
+
+/* ── METRIC TAB SWITCH (inside right panel) ────────────────── */
+function switchMetricTab(tabKey) {
+  document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.mtab[data-tab="${tabKey}"]`).classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const tp = document.getElementById('tp-' + tabKey);
+  if (tp) tp.classList.add('active');
 }
 
 window.addEventListener('message', function(e) {
-  if (e.data && e.data.type==='nta_click') updatePanel(e.data.props);
+  if (!e.data || e.data.type !== 'nta_click') return;
+  selectNeighborhoodA(e.data.props);
 });
+
+/* ── MAP HELPERS ───────────────────────────────────────────── */
+function highlightNTA(ntaName, color) {
+  const frame = document.getElementById('map-frame');
+  if (frame && frame.contentWindow)
+    frame.contentWindow.postMessage({type:'highlight_nta', nta_name:ntaName, color:color, weight:2.5}, '*');
+}
+function resetHighlights() {
+  const frame = document.getElementById('map-frame');
+  if (frame && frame.contentWindow)
+    frame.contentWindow.postMessage({type:'clear_highlights'}, '*');
+}
+function zoomToNTA(ntaName) {
+  const frame = document.getElementById('map-frame');
+  if (frame && frame.contentWindow)
+    frame.contentWindow.postMessage({type:'zoom_to_nta', nta_name:ntaName}, '*');
+}
+
+/* ── SEARCH LOGIC ──────────────────────────────────────────── */
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function bindSearch(inputId, ddId, clearId, onSelect) {
+  const inp  = document.getElementById(inputId);
+  const dd   = document.getElementById(ddId);
+  const clr  = document.getElementById(clearId);
+  let filtered = [];
+
+  inp.addEventListener('input', function() {
+    const q = this.value.trim().toLowerCase();
+    clr.style.display = q ? '' : 'none';
+    if (!q || !ntaData.length) { dd.classList.remove('open'); return; }
+    filtered = ntaData.filter(d => d.nta_name && d.nta_name.toLowerCase().includes(q)).slice(0, 9);
+    if (!filtered.length) { dd.classList.remove('open'); return; }
+    dd.innerHTML = filtered.map((d, i) =>
+      `<div class="sdd-item" data-i="${i}">
+        <span>${esc(d.nta_name)}</span>
+        <span class="sdd-boro">${esc((d.boro_name||'').toUpperCase())}</span>
+      </div>`
+    ).join('');
+    dd.querySelectorAll('.sdd-item').forEach(function(el) {
+      el.addEventListener('mousedown', function(ev) {
+        ev.preventDefault();
+        const idx = parseInt(this.dataset.i);
+        onSelect(filtered[idx]);
+        dd.classList.remove('open');
+      });
+    });
+    dd.classList.add('open');
+  });
+
+  inp.addEventListener('blur',  () => setTimeout(() => dd.classList.remove('open'), 200));
+  inp.addEventListener('focus', function() { if (this.value.trim()) this.dispatchEvent(new Event('input')); });
+  clr.addEventListener('click', function() {
+    inp.value = '';
+    inp.classList.remove('filled');
+    clr.style.display = 'none';
+    dd.classList.remove('open');
+    onSelect(null);
+  });
+}
+
+function initSearch() {
+  bindSearch('search-a', 'search-a-dd', 'search-a-clear', function(props) {
+    if (!props) { clearA(); return; }
+    selectNeighborhoodA(props);
+  });
+  bindSearch('search-b', 'search-b-dd', 'search-b-clear', function(props) {
+    if (!props) { clearB(); return; }
+    selectNeighborhoodB(props);
+  });
+
+  document.getElementById('benchmark-toggle').addEventListener('click', toggleBenchmark);
+  document.getElementById('zoom-btn-a').addEventListener('click', function() {
+    if (searchAProps) zoomToNTA(searchAProps.nta_name);
+  });
+}
+
+function selectNeighborhoodA(props) {
+  searchAProps = props;
+  const inp = document.getElementById('search-a');
+  inp.value = props.nta_name || '';
+  inp.classList.add('filled');
+  document.getElementById('search-a-clear').style.display = '';
+  resetHighlights();
+  highlightNTA(props.nta_name, '#2fa05e');
+  if (searchBProps) highlightNTA(searchBProps.nta_name, '#a855f7');
+  if (useBenchmark || searchBProps) {
+    buildCompareTable(props, useBenchmark ? BENCHMARK : searchBProps);
+  } else {
+    showSingleView(props);
+  }
+}
+
+function selectNeighborhoodB(props) {
+  searchBProps = props;
+  useBenchmark = false;
+  document.getElementById('benchmark-toggle').classList.remove('active');
+  const inp = document.getElementById('search-b');
+  inp.value = props.nta_name || '';
+  inp.classList.add('filled');
+  document.getElementById('search-b-clear').style.display = '';
+  highlightNTA(props.nta_name, '#a855f7');
+  if (searchAProps) buildCompareTable(searchAProps, props);
+}
+
+function toggleBenchmark() {
+  useBenchmark = !useBenchmark;
+  const btn = document.getElementById('benchmark-toggle');
+  btn.classList.toggle('active', useBenchmark);
+  if (useBenchmark) {
+    // Clear search B
+    searchBProps = null;
+    const inp = document.getElementById('search-b');
+    inp.value = '';
+    inp.classList.remove('filled');
+    document.getElementById('search-b-clear').style.display = 'none';
+    document.getElementById('search-b-dd').classList.remove('open');
+    resetHighlights();
+    if (searchAProps) { highlightNTA(searchAProps.nta_name, '#2fa05e'); buildCompareTable(searchAProps, BENCHMARK); }
+  } else {
+    if (searchAProps) showSingleView(searchAProps);
+  }
+}
+
+function clearA() {
+  searchAProps = null;
+  const inp = document.getElementById('search-a');
+  inp.value = ''; inp.classList.remove('filled');
+  document.getElementById('search-a-clear').style.display = 'none';
+  resetHighlights();
+  if (searchBProps) highlightNTA(searchBProps.nta_name, '#a855f7');
+  document.getElementById('compare-panel').style.display = 'none';
+  document.getElementById('nta-data').classList.remove('visible');
+  document.getElementById('placeholder').style.display = 'flex';
+}
+
+function clearB() {
+  searchBProps = null;
+  resetHighlights();
+  if (searchAProps) { highlightNTA(searchAProps.nta_name, '#2fa05e'); showSingleView(searchAProps); }
+}
+
+function showSingleView(props) {
+  document.getElementById('compare-panel').style.display = 'none';
+  document.getElementById('placeholder').style.display   = 'none';
+  updatePanel(props);
+}
+
+function resetCompare() {
+  searchBProps = null;
+  useBenchmark = false;
+  document.getElementById('benchmark-toggle').classList.remove('active');
+  const inp = document.getElementById('search-b');
+  inp.value = ''; inp.classList.remove('filled');
+  document.getElementById('search-b-clear').style.display = 'none';
+  document.getElementById('compare-panel').style.display = 'none';
+  resetHighlights();
+  if (searchAProps) { highlightNTA(searchAProps.nta_name, '#2fa05e'); showSingleView(searchAProps); }
+  else document.getElementById('placeholder').style.display = 'flex';
+}
+
+/* ── BENCHMARK RATING ──────────────────────────────────────── */
+function benchRating(val, target, better) {
+  if (better === 'higher') {
+    const r = target > 0 ? val / target : 1;
+    return r >= 0.8 ? 'good' : r >= 0.5 ? 'warn' : 'bad';
+  }
+  if (val <= 0) return 'good';
+  const r = val / target;
+  return r <= 1.2 ? 'good' : r <= 1.6 ? 'warn' : 'bad';
+}
+
+/* ── COMPARISON TABLE ──────────────────────────────────────── */
+function buildCompareTable(pA, pBorBench) {
+  const isBench = !!pBorBench._isBenchmark;
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('nta-data').classList.remove('visible');
+
+  resetHighlights();
+  highlightNTA(pA.nta_name, '#2fa05e');
+  if (!isBench) highlightNTA(pBorBench.nta_name, '#a855f7');
+
+  const eqA = EQ[pA.equity_label] || EQ['Adequate'];
+
+  const colBClass = isBench ? 'bench-hdr' : 'b-hdr';
+  const colBHtml  = isBench
+    ? `<span class="ct-hdr-name" style="color:#d4af37">🏆 NYC Healthy Benchmark</span>
+       <span class="ct-hdr-badge" style="background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.4);color:#d4af37">TARGET</span>`
+    : (function() {
+        const eq = EQ[pBorBench.equity_label] || EQ['Adequate'];
+        return `<span class="ct-hdr-name">${esc(pBorBench.nta_name||'—')}</span>
+                <span class="ct-hdr-boro">${esc((pBorBench.boro_name||'').toUpperCase())}</span>
+                <span class="ct-hdr-badge" style="background:${eq.bg};border:1px solid ${eq.border};color:${eq.text}">${esc((pBorBench.equity_label||'').toUpperCase())}</span>`;
+      })();
+
+  const metrics = [
+    { label:'Tree Density',      bFmt:'≥ 1,000/km²',  bTarget:1000,  better:'higher',
+      aVal:parseFloat(pA.density_2015)||0,             bVal:parseFloat(pBorBench.density_2015)||0,
+      fmt: v => Math.round(v).toLocaleString()+'/km²' },
+    { label:'Median Income',     bFmt:'$63,000',       bTarget:63000, better:'higher',
+      aVal:parseInt(pA.median_income)||0,              bVal:parseInt(pBorBench.median_income)||0,
+      fmt: v => '$'+v.toLocaleString() },
+    { label:'Underserved Score', bFmt:'< 0.30',        bTarget:0.30,  better:'lower',
+      aVal:parseFloat(pA.underserved)||0,              bVal:parseFloat(pBorBench.underserved)||0,
+      fmt: v => v.toFixed(3) },
+    { label:'Heat Risk',         bFmt:'< 0.40',        bTarget:0.40,  better:'lower',
+      aVal:parseFloat(pA.heat_proxy)||0,               bVal:parseFloat(pBorBench.heat_proxy)||0,
+      fmt: v => v.toFixed(3) },
+    { label:'PM2.5',             bFmt:'< 8.0 μg/m³',  bTarget:8.0,   better:'lower',
+      aVal:parseFloat(pA.pm25)||0,                     bVal:parseFloat(pBorBench.pm25)||0,
+      fmt: v => v > 0 ? v.toFixed(1)+' μg/m³' : '—' },
+    { label:'Trees Gained',      bFmt:'positive',      bTarget:1,     better:'higher',
+      aVal:parseInt(pA.tree_change)||0,                bVal:parseInt(pBorBench.tree_change)||0,
+      fmt: v => (v > 0 ? '+' : '') + v.toLocaleString() },
+  ];
+
+  let scoreA = 0, scoreB = 0, total = 0;
+  metrics.forEach(function(m) {
+    if (m.label === 'PM2.5' && m.aVal <= 0 && m.bVal <= 0) return;
+    total++;
+    if (benchRating(m.aVal, m.bTarget, m.better) === 'good') scoreA++;
+    if (!isBench && benchRating(m.bVal, m.bTarget, m.better) === 'good') scoreB++;
+  });
+
+  function winOf(a, b, better) {
+    if (Math.abs(a - b) < 0.0001) return 'tie';
+    return better === 'higher' ? (a > b ? 'a' : 'b') : (a < b ? 'a' : 'b');
+  }
+
+  const rowsHtml = metrics.map(function(m) {
+    if (m.label === 'PM2.5' && m.aVal <= 0 && m.bVal <= 0) return '';
+    const rA   = benchRating(m.aVal, m.bTarget, m.better);
+    const aWin = !isBench && winOf(m.aVal, m.bVal, m.better) === 'a';
+    const aCellHtml = `<div class="ct-cell ${rA}${aWin?' win':''}">${m.fmt(m.aVal)}${aWin?' ▶':''}</div>`;
+
+    let bCellHtml;
+    if (isBench) {
+      const metIcon = rA === 'good' ? ' ✓' : '';
+      bCellHtml = `<div class="ct-cell bench-tgt">${m.bFmt}${metIcon}</div>`;
+    } else {
+      const rB   = benchRating(m.bVal, m.bTarget, m.better);
+      const bWin = winOf(m.aVal, m.bVal, m.better) === 'b';
+      bCellHtml  = `<div class="ct-cell b-${rB}${bWin?' win':''}">${m.fmt(m.bVal)}${bWin?' ◀':''}</div>`;
+    }
+
+    return `<div class="ct-grid-row">
+      <div class="ct-metric-lbl">${m.label}</div>
+      ${aCellHtml}
+      ${bCellHtml}
+    </div>`;
+  }).join('');
+
+  const scoreHtml = isBench
+    ? `<div class="ct-score"><span>Meets <b>${scoreA} of ${total}</b> healthy benchmarks</span></div>`
+    : `<div class="ct-score"><span>A: <b>${scoreA}/${total}</b> benchmarks</span><span>B: <b>${scoreB}/${total}</b> benchmarks</span></div>`;
+
+  const gapHtml = makeGapAnalysis(pA, pBorBench, isBench, scoreA, scoreB, total);
+  const shortName = esc((pA.nta_name||'').split(',')[0].split('-')[0].trim());
+
+  document.getElementById('compare-panel').innerHTML = `
+    <div class="ct-grid-hdr">
+      <div></div>
+      <div class="ct-hdr-cell a-hdr">
+        <span class="ct-hdr-name">${esc(pA.nta_name||'—')}</span>
+        <span class="ct-hdr-boro">${esc((pA.boro_name||'').toUpperCase())}</span>
+        <span class="ct-hdr-badge" style="background:${eqA.bg};border:1px solid ${eqA.border};color:${eqA.text}">${esc((pA.equity_label||'').toUpperCase())}</span>
+      </div>
+      <div class="ct-hdr-cell ${colBClass}">${colBHtml}</div>
+    </div>
+    ${rowsHtml}
+    ${scoreHtml}
+    <div class="ct-gap">${gapHtml}</div>
+    <div class="ct-actions">
+      <button class="zoom-btn" id="ct-zoom-btn">⊕ Zoom to ${shortName}</button>
+      <button class="ct-reset-btn" onclick="resetCompare()">✕ Reset</button>
+    </div>
+  `;
+  document.getElementById('compare-panel').style.display = 'block';
+  document.getElementById('ct-zoom-btn').addEventListener('click', function() {
+    zoomToNTA(pA.nta_name);
+  });
+}
+
+function makeGapAnalysis(pA, pBorBench, isBench, scoreA, scoreB, total) {
+  const nameA = esc(pA.nta_name || 'This neighborhood');
+  if (!isBench) {
+    const nameB = esc(pBorBench.nta_name || 'Neighborhood B');
+    return `${nameA} meets <b>${scoreA} of ${total}</b> healthy benchmarks. ${nameB} meets <b>${scoreB} of ${total}</b> benchmarks.`;
+  }
+  const densA = parseFloat(pA.density_2015)||0;
+  const incA  = parseInt(pA.median_income)||0;
+  const pm25A = parseFloat(pA.pm25)||0;
+  const parts = [];
+
+  const densGap = Math.max(0, 1000 - densA);
+  if (densGap > 150) parts.push(`missing approximately ${Math.round(densGap).toLocaleString()} trees/km² to reach a healthy canopy level`);
+
+  if (incA < 63000) {
+    const pct = Math.round(((63000 - incA) / 63000) * 100);
+    parts.push(`median income is ${pct}% below the NYC median of $63,000`);
+  }
+
+  if (pm25A > 8.5) {
+    const pct = Math.round(((pm25A - 8.0) / 8.0) * 100);
+    parts.push(`PM2.5 is ${pct}% above the clean air benchmark`);
+  }
+
+  if (!parts.length)
+    return `${nameA} is well-served and meets <b>${scoreA} of ${total}</b> healthy neighborhood benchmarks.`;
+
+  const joined = parts.length === 1 ? parts[0]
+    : parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1];
+  return `${nameA} is ${joined}. It currently meets <b>${scoreA} of ${total}</b> healthy neighborhood benchmarks.`;
+}
 
 /* ── BOROUGH STATS ─────────────────────────────────────────── */
 function buildBoroughStats() {
@@ -820,6 +1447,7 @@ function injectIntoIframe() {
       /* Collect NTA data + attach click handlers */
       window.__ntaData=[];
       var _seen={};
+      var _handledIds={};
       function attach(layer){
         if(!layer) return;
         if(layer.eachLayer){
@@ -828,21 +1456,66 @@ function injectIntoIframe() {
               var props=sub.feature.properties;
               var name=props.nta_name;
               if(name&&!_seen[name]){_seen[name]=true;window.__ntaData.push(props);}
-              sub.on('click',function(e){
-                window.parent.postMessage({type:'nta_click',props:e.target.feature.properties},'*');
-              });
+              /* Deduplicate handlers using leaflet stamp so each sub-layer
+                 only ever gets one click listener even if attach() is called
+                 multiple times (once per visible layer + overlayadd). */
+              var lid=L.stamp(sub);
+              if(!_handledIds[lid]){
+                _handledIds[lid]=true;
+                sub.on('click',function(e){
+                  window.parent.postMessage({type:'nta_click',props:e.target.feature.properties},'*');
+                });
+              }
             }
             attach(sub);
           });
         }
       }
-      map.eachLayer(attach);
+      /* Walk all registered overlays (visible AND hidden) so every layer
+         has click handlers from the start, not just the default-on ones. */
+      Object.values(window.__layerMap).forEach(function(l){attach(l);});
+      /* Safety net: re-attach if a layer is toggled on after initial load. */
+      map.on('overlayadd',function(e){attach(e.layer);});
 
       window.__toggleLayer=function(name,show){
         var layer=window.__layerMap[name];
         if(!layer) return;
         if(show) layer.addTo(map); else map.removeLayer(layer);
       };
+
+      /* Listen for highlight/clear messages from parent dashboard */
+      window.addEventListener('message',function(msg){
+        if(!msg.data) return;
+        if(msg.data.type==='highlight_nta'){
+          var nta=msg.data.nta_name,color=msg.data.color||'#fff',weight=msg.data.weight||2.5;
+          Object.values(window.__layerMap||{}).forEach(function(layer){
+            if(layer&&layer.eachLayer)layer.eachLayer(function(sub){
+              if(sub.feature&&sub.feature.properties&&sub.feature.properties.nta_name===nta)
+                sub.setStyle({color:color,weight:weight,fillOpacity:0.9});
+            });
+          });
+        }
+        if(msg.data.type==='clear_highlights'){
+          Object.values(window.__layerMap||{}).forEach(function(layer){
+            if(layer&&layer.eachLayer)layer.eachLayer(function(sub){
+              if(sub.feature)sub.setStyle({color:'#ffffff',weight:0.5,fillOpacity:0.80});
+            });
+          });
+        }
+        if(msg.data.type==='zoom_to_nta'){
+          var znta=msg.data.nta_name,zfound=false;
+          Object.values(window.__layerMap||{}).forEach(function(layer){
+            if(zfound||!layer||!layer.eachLayer) return;
+            layer.eachLayer(function(sub){
+              if(zfound) return;
+              if(sub.feature&&sub.feature.properties&&sub.feature.properties.nta_name===znta){
+                zfound=true;
+                if(sub.getBounds) map.fitBounds(sub.getBounds(),{padding:[40,40]});
+              }
+            });
+          });
+        }
+      });
     })();`;
     iDoc.head.appendChild(s);
 
@@ -866,21 +1539,6 @@ function injectIntoIframe() {
 
 mapFrame.addEventListener('load', function() { setTimeout(injectIntoIframe, 900); });
 
-/* ── FILTER CHECKBOXES ─────────────────────────────────────── */
-const LAYER_NAMES = {
-  density:     '🌳 Tree Density (2015)',
-  income:      '💵 Median Household Income',
-  underserved: '🔴 Underserved Index',
-  heat:        '🌡 Urban Heat Vulnerability',
-};
-document.querySelectorAll('.filter-cb').forEach(function(cb) {
-  cb.addEventListener('change', function() {
-    const name = LAYER_NAMES[this.dataset.layer];
-    if (!name) return;
-    try { mapFrame.contentWindow.__toggleLayer && mapFrame.contentWindow.__toggleLayer(name, this.checked); } catch(e){}
-  });
-});
-
 /* ── NAV TAB SWITCHING ─────────────────────────────────────── */
 document.querySelectorAll('.nav-tab').forEach(function(btn) {
   btn.addEventListener('click', function() {
@@ -903,8 +1561,7 @@ document.querySelectorAll('.nav-tab').forEach(function(btn) {
 /* ── PANEL METRIC TABS ─────────────────────────────────────── */
 document.querySelectorAll('.mtab').forEach(function(btn) {
   btn.addEventListener('click', function() {
-    document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
+    switchMetricTab(this.dataset.tab);
   });
 });
 </script>

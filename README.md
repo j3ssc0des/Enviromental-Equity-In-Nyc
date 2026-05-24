@@ -27,7 +27,8 @@ This project analyzes two census snapshots (2005 and 2015) to quantify that ineq
 
 - [NYC Street Tree Census 2015](https://data.cityofnewyork.us/resource/uvpi-gqnh)
 - [NYC Street Tree Census 2005](https://data.cityofnewyork.us/resource/29bw-z7pj)
-- [NYC Neighborhood Tabulation Areas](https://data.cityofnewyork.us/api/geospatial/d3qk-6yt9)
+- [NYC Neighborhood Tabulation Areas (2010)](https://data.cityofnewyork.us/City-Government/2010-Census-Tract-to-Neighborhood-Tabulation-Area-/8ius-dhrr)
+- [US Census TIGER/Line Cartographic Boundaries (2010)](https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html)
 
 ## Built With
 

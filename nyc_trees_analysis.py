@@ -1,3 +1,5 @@
+
+
 #!/usr/bin/env python3
 """
 ╔══════════════════════════════════════════════════════════════════╗
@@ -203,26 +205,46 @@ if LIVE_DATA:
         df05 = df05[["nta_name", "trees_2005"]]
         print(f"   ✓ {df05['trees_2005'].sum():,.0f} trees · {len(df05)} NTAs")
 
-        print("📡 Fetching NTA boundaries from NYC Open Data…")
-        r = _fetch(
-            "https://data.cityofnewyork.us/api/geospatial/d3qk-6yt9"
-            "?method=export&type=GeoJSON",
-            timeout=60,
+        print("📡 Fetching 2010 census tract boundaries from US Census Bureau…")
+        gdf_tracts = gpd.read_file(
+            "https://www2.census.gov/geo/tiger/GENZ2010/gz_2010_36_140_00_500k.zip"
         )
-        gdf_raw = gpd.read_file(io.BytesIO(r.content))
-        gdf_raw.columns = gdf_raw.columns.str.lower()
+        gdf_tracts = gdf_tracts.to_crs("EPSG:4326")
+        nyc_counties = {"005", "047", "061", "081", "085"}
+        gdf_tracts = gdf_tracts[
+            gdf_tracts["COUNTY"].astype(str).str.zfill(3).isin(nyc_counties)
+        ].copy()
+        gdf_tracts["COUNTY"] = gdf_tracts["COUNTY"].astype(str).str.zfill(3)
+        gdf_tracts["TRACT"]  = gdf_tracts["TRACT"].astype(str).str.zfill(6)
+        print(f"   ✓ {len(gdf_tracts)} NYC census tracts loaded")
 
-        # Normalise column names across API versions
-        col_map = {}
-        for c in gdf_raw.columns:
-            if c in ("ntacode", "nta_code"):    col_map[c] = "nta_code"
-            elif c in ("ntaname", "nta_name"):  col_map[c] = "nta_name"
-            elif "boro" in c and c not in ("boro_name",): col_map[c] = "boro_name"
-        gdf_raw = gdf_raw.rename(columns=col_map)
-        print(f"   ✓ {len(gdf_raw)} NTA polygons")
+        print("📡 Fetching NTA crosswalk from NYC Open Data…")
+        r = _fetch(
+            "https://data.cityofnewyork.us/resource/8ius-dhrr.json",
+            params={"$limit": "3000"},
+        )
+        xwalk = pd.DataFrame(r.json()).rename(columns={
+            "_2010_census_tract":                    "TRACT",
+            "_2010_census_bureau_fips_county_code":  "COUNTY",
+            "neighborhood_tabulation_area_nta_code": "nta_code",
+            "neighborhood_tabulation_area_nta_name": "nta_name",
+            "borough":                               "boro_name",
+        })
+        xwalk["COUNTY"] = xwalk["COUNTY"].astype(str).str.zfill(3)
+        xwalk["TRACT"]  = xwalk["TRACT"].astype(str).str.zfill(6)
+        xwalk = xwalk[["TRACT","COUNTY","nta_code","nta_name","boro_name"]].drop_duplicates()
+        print(f"   ✓ {len(xwalk)} crosswalk rows · {xwalk['nta_code'].nunique()} NTAs")
 
-        # ── Merge tree counts onto boundaries ───────────────────────────
-        merged = gdf_raw.merge(df15, on="nta_code", how="left")
+        gdf_with_nta = gdf_tracts.merge(xwalk, on=["TRACT","COUNTY"], how="left")
+        gdf_with_nta = gdf_with_nta.dropna(subset=["nta_code"])
+        gdf_boundaries = gdf_with_nta.dissolve(by="nta_code", aggfunc="first").reset_index()
+        gdf_boundaries = gdf_boundaries.set_crs("EPSG:4326", allow_override=True)
+        print(f"   ✓ {len(gdf_boundaries)} NTA polygons assembled")
+
+        # Merge tree counts onto real boundary polygons
+        # 2015: join on NTA code (e.g. "BX31") — direct match
+        merged = gdf_boundaries.merge(df15, on="nta_code", how="left")
+        # 2005: join on NTA name — best available key in the 2005 dataset
         merged = merged.merge(df05, on="nta_name", how="left")
         merged["trees_2015"] = merged["trees_2015"].fillna(0).astype(int)
         merged["trees_2005"] = merged["trees_2005"].fillna(0).astype(int)
@@ -253,7 +275,9 @@ if LIVE_DATA:
               f"{int(merged['trees_2005'].sum()):,} trees (2005)")
 
     except Exception as exc:
+        import traceback
         print(f"\n⚠  Live data unavailable: {exc}")
+        traceback.print_exc()
         print("   Falling back to embedded dataset…")
 
 # ── Embedded fallback ─────────────────────────────────────────────────────
@@ -288,6 +312,70 @@ if not live_ok:
 
 
 # ════════════════════════════════════════════════════════════════
+# 2b. AIR QUALITY (PM2.5)
+#     Fetched independently — failure here never blocks the map.
+#     NaN is kept for unmatched NTAs; median fill is used only
+#     inside the underserved normalisation in Section 3.
+# ════════════════════════════════════════════════════════════════
+
+merged["pm25"] = np.nan   # default; overwritten below if fetch succeeds
+
+if LIVE_DATA:
+    try:
+        import requests, re
+        print("\n📡 Fetching air quality (PM2.5) from NYC Open Data…")
+        # PM2.5 NTA-level data is not in this dataset; finest available is UHF42
+        # (42 United Hospital Fund health districts). We match NTA names to UHF42
+        # areas by token overlap then assign the UHF42-level PM2.5 value.
+        r = _fetch(
+            "https://data.cityofnewyork.us/resource/c3uy-2p5r.json",
+            params={
+                "$where": ("name='Fine particles (PM 2.5)' AND geo_type_name='UHF42'"
+                           " AND time_period LIKE 'Annual%'"),
+                "$limit": "500",
+            },
+        )
+        aq = pd.DataFrame(r.json())
+        aq["data_value"] = pd.to_numeric(aq["data_value"], errors="coerce")
+        aq = aq.dropna(subset=["data_value", "geo_place_name"])
+
+        # Most recent annual average year
+        aq["_yr"] = pd.to_datetime(aq["start_date"], errors="coerce").dt.year
+        latest_yr = int(aq["_yr"].max())
+        aq = aq[aq["_yr"] == latest_yr].copy()
+        print(f"   ✓ {len(aq)} UHF42 PM2.5 annual readings · year {latest_yr}")
+
+        # Build lowercase name → value lookup
+        uhf_map = {row["geo_place_name"].lower().strip(): float(row["data_value"])
+                   for _, row in aq.iterrows()}
+
+        # Match NTA name to best-fitting UHF42 area by token overlap
+        def _match_uhf(nta_name):
+            key = nta_name.lower().strip()
+            if key in uhf_map:
+                return uhf_map[key]
+            tokens = set(re.split(r"[\s\-–,()]+", key)) - {"the","and","or","of","etc",""}
+            best_val, best_score = None, 0.0
+            for uhf_name, val in uhf_map.items():
+                uhf_tok = set(re.split(r"[\s\-–,()]+", uhf_name)) - {"the","and","or","of",""}
+                ov = len(tokens & uhf_tok)
+                if ov > 0:
+                    score = ov / max(len(tokens), 1)
+                    if score > best_score:
+                        best_score, best_val = score, val
+            return best_val if best_score >= 0.30 else None
+
+        merged["pm25"] = merged["nta_name"].apply(_match_uhf).round(2)
+        matched = merged["pm25"].notna().sum()
+        print(f"   ✓ PM2.5 matched to {matched} / {len(merged)} NTAs (UHF42 granularity)")
+
+    except Exception as exc:
+        import traceback
+        print(f"\n⚠  PM2.5 data unavailable: {exc}")
+        traceback.print_exc()
+
+
+# ════════════════════════════════════════════════════════════════
 # 3.  DERIVED METRICS
 # ════════════════════════════════════════════════════════════════
 
@@ -311,11 +399,15 @@ merged["inc_norm"]    = norm01(merged["median_income"])
 merged["den_norm"]    = norm01(merged["density_2015"])
 merged["heat_proxy"]  = (1 - merged["den_norm"] * 0.6 - merged["inc_norm"] * 0.4).round(3)
 
-# Composite underserved index (higher = more need for green investment)
-# Low income + low tree density = most underserved
+# PM2.5: fill NaN with median for normalisation (keeps every NTA in the index)
+_pm25_fill       = merged["pm25"].fillna(merged["pm25"].median() if merged["pm25"].notna().any() else 8.0)
+merged["pm25_norm"] = norm01(_pm25_fill)
+
+# Composite underserved index — low density + low income + high PM2.5 = most underserved
 merged["underserved"] = (
-    0.55 * (1 - merged["den_norm"]) +
-    0.45 * (1 - merged["inc_norm"])
+    0.40 * (1 - merged["den_norm"]) +
+    0.35 * (1 - merged["inc_norm"]) +
+    0.25 * merged["pm25_norm"]
 ).round(3)
 
 # Bucket for labelling
@@ -360,6 +452,17 @@ losers = (merged.nsmallest(8,"tree_change")
           .reset_index(drop=True))
 print(losers.to_string())
 
+if merged["pm25"].notna().any():
+    print("\n" + "─" * 65)
+    print("  TOP 5 MOST POLLUTED NTAs (PM2.5 μg/m³)")
+    print("─" * 65)
+    pm25_top = (merged.dropna(subset=["pm25"])
+                .nlargest(5, "pm25")
+                [["nta_name", "boro_name", "pm25"]]
+                .reset_index(drop=True))
+    pm25_top.index += 1
+    print(pm25_top.to_string())
+
 
 # ════════════════════════════════════════════════════════════════
 # 5.  FOLIUM MAP
@@ -400,6 +503,11 @@ HEAT_CM = LinearColormap(
     vmin=0, vmax=1,
     caption="Urban Heat Vulnerability (estimated)",
 )
+PM25_CM = LinearColormap(
+    ["#00441b","#1b7837","#f7f7f7","#d6604d","#67001f"],
+    vmin=5.0, vmax=12.0,
+    caption="PM2.5 (μg/m³) — Annual Mean",
+)
 
 # ── Map object ───────────────────────────────────────────────────
 m = folium.Map(
@@ -435,31 +543,10 @@ def make_layer(value_col, colormap, layer_name, show=False):
     def highlight(feat):
         return {"weight": 2.5, "color": "#ffffcc", "fillOpacity": 0.95}
 
-    tooltip_fields = [
-        "nta_name", "boro_name", "equity_label",
-        "trees_2015", "density_2015", "median_income",
-        "tree_change", "underserved",
-    ]
-    tooltip_aliases = [
-        "📍 NTA:", "🏙 Borough:", "🏷 Status:",
-        "🌳 Trees (2015):", "📐 Density (trees/km²):", "💵 Income ($):",
-        "📈 Change vs 2005:", "🔴 Underserved Index:",
-    ]
-
     GeoJson(
         data=gdf_wgs.__geo_interface__,
         style_function=style,
         highlight_function=highlight,
-        tooltip=folium.GeoJsonTooltip(
-            fields=tooltip_fields, aliases=tooltip_aliases,
-            sticky=True, labels=True,
-            style=("background:#111; color:#eee; font-family:monospace;"
-                   "font-size:12px; border:1px solid #555; padding:8px;"),
-        ),
-        popup=folium.GeoJsonPopup(
-            fields=tooltip_fields, aliases=tooltip_aliases,
-            max_width=320, parse_html=False,
-        ),
     ).add_to(fg)
     return fg
 
@@ -469,6 +556,7 @@ make_layer("median_income",INCOME_CM,     "💵 Median Household Income",       
 make_layer("underserved",  UNDERSERVED_CM,"🔴 Underserved Index",              show=False).add_to(m)
 make_layer("tree_change",  CHANGE_CM,     "📈 Tree Change 2005→2015",          show=False).add_to(m)
 make_layer("heat_proxy",   HEAT_CM,       "🌡 Urban Heat Vulnerability",       show=False).add_to(m)
+make_layer("pm25",         PM25_CM,       "💨 Air Quality (PM2.5)",            show=False).add_to(m)
 
 # ── Underserved markers (critical NTAs) ──────────────────────────
 critical_fg = folium.FeatureGroup(name="🚨 Critical NTAs (top 15)", show=True)
@@ -513,40 +601,21 @@ heat_fg.add_to(m)
 # ── Layer control ────────────────────────────────────────────────
 LayerControl(collapsed=False, position="topright").add_to(m)
 
-# ── Custom title + legend panel (injected HTML) ──────────────────
-# Use the official NYC Parks census total regardless of which dataset
-# loaded — the embedded subset sums to ~472k which would contradict
-# the figure shown on the landing page.
-total_trees = "666,134"
-n_ntas      = str(len(merged))
-pct_gain    = str(round((merged['trees_2015'].sum() - merged['trees_2005'].sum())
-                         / merged['trees_2005'].sum() * 100, 1))
-
+# ── Custom legend panel (injected HTML) ──────────────────────────
 title_html = (
     "<style>"
     "@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@500&family=DM+Sans:wght@400;600&display=swap');"
-    ".mtc{position:fixed;top:10px;left:54px;z-index:9999;background:rgba(8,12,8,0.88);"
-    "border:1px solid #2fa05e;border-left:3px solid #2fa05e;padding:8px 12px 8px;"
-    "border-radius:4px;box-shadow:0 2px 16px rgba(0,0,0,0.5);backdrop-filter:blur(8px)}"
-    ".mtc h1{margin:0 0 5px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:#e8f0e8;line-height:1.2}"
-    ".mtc .sr{display:flex;gap:10px}"
-    ".mtc .st{text-align:center}"
-    ".mtc .sv{font-family:'Space Mono',monospace;font-size:12px;font-weight:500;color:#5cc98a;line-height:1}"
-    ".mtc .sl{font-family:'DM Sans',sans-serif;font-size:8px;color:#5a7a5a;text-transform:uppercase;letter-spacing:0.5px;margin-top:1px}"
     ".eql{position:fixed;bottom:28px;left:54px;z-index:9999;background:rgba(8,12,8,0.88);"
     "border:1px solid #222;padding:8px 10px;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,0.4)}"
     ".eql h4{margin:0 0 5px;font-size:9px;color:#5a7a5a;text-transform:uppercase;letter-spacing:1px;font-family:'DM Sans',sans-serif}"
     ".eql .er{display:flex;align-items:center;gap:6px;margin:2px 0}"
     ".eql .dt{width:9px;height:9px;border-radius:50%;flex-shrink:0}"
     ".eql span{font-size:10px;color:#b0c8b0;font-family:'DM Sans',sans-serif}"
+    ".nta-tip{background:rgba(8,12,8,0.93)!important;border:1px solid #2fa05e!important;"
+    "border-radius:4px!important;padding:7px 11px!important;"
+    "box-shadow:0 2px 10px rgba(0,0,0,0.55)!important;pointer-events:none}"
+    ".leaflet-tooltip.nta-tip::before{display:none!important}"
     "</style>"
-    "<div class='mtc'>"
-    "<h1>🌳 NYC Green Space Inequity</h1>"
-    "<div class='sr'>"
-    f"<div class='st'><div class='sv'>{total_trees}</div><div class='sl'>Trees 2015</div></div>"
-    f"<div class='st'><div class='sv'>{n_ntas}</div><div class='sl'>NTAs</div></div>"
-    f"<div class='st'><div class='sv'>+{pct_gain}%</div><div class='sl'>Since 2005</div></div>"
-    "</div></div>"
     "<div class='eql'><h4>Equity Status</h4>"
     "<div class='er'><div class='dt' style='background:#2fa05e'></div><span>Well-Served</span></div>"
     "<div class='er'><div class='dt' style='background:#a8e6bf'></div><span>Adequate</span></div>"
@@ -554,6 +623,97 @@ title_html = (
     "<div class='er'><div class='dt' style='background:#d94f00'></div><span>Underserved</span></div>"
     "<div class='er'><div class='dt' style='background:#6d0000'></div><span>Critical</span></div>"
     "</div>"
+    "<script>"
+    "(function(){"
+    "var EQ={'Well-Served':'#2fa05e','Adequate':'#a8e6bf','Needs Attention':'#f5b800','Underserved':'#d94f00','Critical':'#6d0000'};"
+
+    # ── layer-aware tooltip factory ───────────────────────────────────
+    "function getTip(p,name){"
+    "var html='<div style=\"font-family:DM Sans,sans-serif;min-width:155px\">'"
+    "+'<b style=\"font-size:13px;color:#e8f0e8;display:block;margin-bottom:5px\">'+(p.nta_name||'')+'</b>';"
+
+    # Tree Density
+    "if(name.indexOf('Tree Density')>=0){"
+    "var dens=Math.round(parseFloat(p.density_2015)||0).toLocaleString();"
+    "html+='<div style=\"color:#b0cbb0;font-size:11px;margin-bottom:4px\">🌳 '+dens+' trees/km²</div>'"
+    "+'<span style=\"background:'+(EQ[p.equity_label]||'#888')+';color:#fff;"
+    "padding:2px 8px;border-radius:3px;font-size:10px\">'+(p.equity_label||'')+'</span>';"
+
+    # Median Income
+    "}else if(name.indexOf('Income')>=0){"
+    "var inc=parseInt(p.median_income)||0;"
+    "var sc=inc>=63000?'#2fa05e':'#d94f00';"
+    "html+='<div style=\"color:#b0cbb0;font-size:11px;margin-bottom:4px\">💵 $'+inc.toLocaleString()+' median income</div>'"
+    "+'<span style=\"color:'+sc+';font-size:10px\">'+(inc>=63000?'↑ above NYC avg':'↓ below NYC avg')+'</span>';"
+
+    # Underserved Index
+    "}else if(name.indexOf('Underserved')>=0){"
+    "var score=(parseFloat(p.underserved)||0).toFixed(2);"
+    "html+='<div style=\"color:#b0cbb0;font-size:11px;margin-bottom:4px\">🔴 Underserved Score: '+score+'</div>'"
+    "+'<span style=\"background:'+(EQ[p.equity_label]||'#888')+';color:#fff;"
+    "padding:2px 8px;border-radius:3px;font-size:10px\">'+(p.equity_label||'')+'</span>';"
+
+    # Tree Change
+    "}else if(name.indexOf('Change')>=0||name.indexOf('Canopy')>=0){"
+    "var chg=parseInt(p.tree_change)||0;"
+    "var cc=chg>=0?'#2fa05e':'#d94f00';"
+    "var icon=chg>=0?'📈 +':'📉 ';"
+    "html+='<div style=\"color:'+cc+';font-size:11px\">'+icon+Math.abs(chg).toLocaleString()+' trees since 2005</div>';"
+
+    # Heat Vulnerability
+    "}else if(name.indexOf('Heat')>=0){"
+    "var heat=parseFloat(p.heat_proxy)||0;"
+    "var hl=heat>=0.75?'Critical':heat>=0.55?'High':heat>=0.35?'Moderate':'Low';"
+    "var hc=heat>=0.75?'#c0392b':heat>=0.55?'#d94f00':heat>=0.35?'#f5b800':'#2fa05e';"
+    "html+='<div style=\"color:#b0cbb0;font-size:11px;margin-bottom:4px\">🌡 Heat Risk: '+heat.toFixed(3)+'</div>'"
+    "+'<span style=\"color:'+hc+';font-size:10px\">'+hl+'</span>';"
+
+    # Air Quality / PM2.5
+    "}else if(name.indexOf('Air')>=0||name.indexOf('PM')>=0){"
+    "var pm=parseFloat(p.pm25)||0;"
+    "if(pm>0){"
+    "var pml=pm<8?'Clean':pm<10?'Moderate':pm<12?'Poor':'Hazardous';"
+    "var pmc=pm<8?'#2fa05e':pm<10?'#f5b800':'#c0392b';"
+    "html+='<div style=\"color:#b0cbb0;font-size:11px;margin-bottom:4px\">💨 PM2.5: '+pm.toFixed(1)+' μg/m³</div>'"
+    "+'<span style=\"color:'+pmc+';font-size:10px\">'+pml+'</span>';"
+    "}else{html+='<div style=\"color:#b0cbb0;font-size:11px\">💨 PM2.5: N/A</div>';}"
+
+    # Fallback
+    "}else{"
+    "html+='<span style=\"background:'+(EQ[p.equity_label]||'#888')+';color:#fff;"
+    "padding:2px 8px;border-radius:3px;font-size:10px\">'+(p.equity_label||'')+'</span>';"
+    "}"
+
+    "return html+'</div>';}"
+
+    # ── bind all features inside a FeatureGroup with the given layer name ──
+    "function bindFG(fg,name){"
+    "if(!fg||!fg.eachLayer)return;"
+    "fg.eachLayer(function(s){"
+    "if(s.feature&&s.feature.properties)"
+    "s.bindTooltip(getTip(s.feature.properties,name),{sticky:true,className:'nta-tip'});"
+    "});}"
+
+    # ── polling loop: wait for map + LayerControl, then wire everything ───
+    "var t=setInterval(function(){"
+    "for(var k in window){try{var v=window[k];"
+    "if(v&&typeof v==='object'&&v.getZoom&&v.eachLayer){"
+    "clearInterval(t);"
+    # Build a stamp→name map from the LayerControl _layers array
+    "var nm={};"
+    "for(var j in window){try{var c=window[j];"
+    "if(c&&c._layers&&Array.isArray(c._layers)){"
+    "c._layers.forEach(function(it){if(it.overlay&&it.name)nm[L.stamp(it.layer)]=it.name;});}"
+    "}catch(e2){}}"
+    # Bind tooltips to all currently-on-map FeatureGroups
+    "v.eachLayer(function(l){if(l.eachLayer)bindFG(l,nm[L.stamp(l)]||'');});"
+    # Re-bind whenever a hidden layer is toggled on
+    "v.on('overlayadd',function(e){bindFG(e.layer,e.name);});"
+    "return;}"
+    "}catch(e){}}"
+    "},200);"
+    "})();"
+    "</script>"
 )
 m.get_root().html.add_child(Element(title_html))
 
