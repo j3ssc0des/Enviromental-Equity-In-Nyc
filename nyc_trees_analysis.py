@@ -1,6 +1,6 @@
 
 
-have#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 ╔══════════════════════════════════════════════════════════════════╗
 ║   NYC STREET TREE CENSUS  ·  Green Space Inequity Analysis       ║
